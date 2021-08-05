@@ -4,39 +4,16 @@
 
 ## Development
 
-Setup npm to install packages in home directory:
+Start web server for development on localhost:1313
 ```
-mkdir "$HOME/.npm-packages"
-npm config set prefix "$HOME/.npm-packages"
-```
-
-Install [Gridsome CLI](https://www.npmjs.com/package/@gridsome/cli):
-```
-npm install --global @gridsome/cli
-```
-
-### Project setup
-```
-npm install
-```
-
-### Start web server for development on localhost:8080
-```
-gridsome develop
-```
-
-### Compiles and minifies for production
-```
-gridsome build
+hugo server -D
 ```
 
 ## Production
 
 ### Host
 
-The application is hosted on [Netlify](https://www.netlify.com/) with the following settings:
-- Build command: `gridsome build`
-- Publish directory: `dist`
+The application is hosted on [Netlify](https://www.netlify.com/) and configured with [netlify.toml](./netlify.toml).
 
 [Deploy notifications](https://docs.netlify.com/site-deploys/notifications/#github-pull-request-comments)
 are commenting in pull requests whenever the deploy preview is ready. The notification's event is `Deploy Preview succeeded`.
