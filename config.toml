@@ -1,121 +1,45 @@
 baseURL = "https://blog.dmarcoux.com/"
 languageCode = "en-us"
+theme = "smigle"
 title = "Dany Marcoux"
 
-# Everything below is from the example config from the Vitae theme
-defaultContentLanguage = "en"
-author = "Dany Marcoux"
-theme = "hugo-vitae"
-paginate = 5
-enableRobotsTXT = true
-
-copyright = "[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [Vitae](https://github.com/dataCobra/hugo-vitae) theme for [Hugo](https://gohugo.io)"
-
-pygmentsstyle = "colorful"
-pygmentscodefences = true
-pygmentscodefencesguesssyntax = true
-
-googleAnalytics = ""
-
-[taxonomies]
-	tag = "tags"
-	category = "categories"
-	series = "series"
-
-[params]
-	# Use homepage.md instead of a list of posts
-	homepage = false
-
-	# Add meta keywords in head part (Site Keywords or Tags of Page)
-	keywords = ["hugo","vitae","theme","static"]
-
-	# Add meta description in head part
-	description = "Dany Marcoux - Blog"
-
-	# Add pagetitle to homepage <title> tag
-	pagetitle = "Blog"
-
-	# Add a subtitle to your website
-	subtitle = ""
-
-	# Add math typesetting with KaTeX (Global with this Param)
-	math = true
-
-	# Optional 80x80 avatar image.
-	# avatar = "/img/vitae.jpg"
-
-	# Optional favicons for website
-	#favicon = true
-
-	# Add list of sections that should show up on the homepage
-	mainSections = ["post"]
-
-	# Add list of Sections/Types that should no be considered by RSS
-	#nofeedSections = ["post"]
-
-	# Deactivate Taxonomies for specific page types
-	#disableTaxoTypes = [""]
-
-	# Custom CSS applied to default styles. (Path could be "static/css/")
-	#customcss = "css/custom.css"
-
-	# Show reading time on a post
-	readingTime = false
-
-	# Show word count on a post
-	wordCount = false
-
-	# Show author on a post (groups with readingTime and wordCount)
-	hideAuthor = true
-
-# Custom JavaScript
-[params.customjs]
-# enable Javascript by setting to true
-enabled = false
-
-# Comments
-[params.comments]
-# Enable Comments with "true"
-enabled = false
-
-# Navigation
 [[menu.main]]
+identifier = "home"
 name = "Home"
 url = "/"
 weight = 1
 
 [[menu.main]]
-name = "All Posts"
-url = "/post"
+identifier = "about"
+name = "About"
+url = "/about/"
 weight = 2
 
 [[menu.main]]
-name = "About"
-url = "/about"
+identifier = "posts"
+name = "Posts"
+url = "/posts/"
 weight = 3
 
 [[menu.main]]
-name = "Tags"
-url = "/tags"
+identifier = "categories"
+name = "Categories"
+url = "/categories/"
 weight = 4
 
 [[menu.main]]
-name = "Categories"
-url = "/categories"
+identifier = "tags"
+name = "Tags"
+url = "/tags/"
 weight = 5
 
-# Social Menu
+[params]
+abbrDateFmt = "Jan 2"
+author = "Dany Marcoux"
+brandIconFile = "images/brandIcon.svg"
+dateFmt = "01-02-2006"
+subtitle = ""
+
 [[params.social]]
-name = "Github"
-icon = "fab fa-github"
+name = "GitHub"
 url = "https://github.com/dmarcoux"
-
-#[[params.social]]
-#name = "Email"
-#icon = "fas fa-envelope"
-#cmd = "mailto:example@example.com"
-
-[[params.social]]
-name = "RSS"
-icon = "fas fa-rss"
-url = "/index.xml"
