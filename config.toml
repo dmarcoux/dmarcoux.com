@@ -3,7 +3,7 @@ languageCode = "en"
 theme = "hugo-coder"
 title = "Dany Marcoux"
 paginate = 20
-pygmentsStyle = "bw"
+pygmentsStyle = "solarized-light"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 
