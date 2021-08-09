@@ -1,45 +1,58 @@
 baseURL = "https://blog.dmarcoux.com/"
-languageCode = "en-us"
-theme = "smigle"
+languageCode = "en"
+theme = "hugo-coder"
 title = "Dany Marcoux"
-
-[[menu.main]]
-identifier = "home"
-name = "Home"
-url = "/"
-weight = 1
-
-[[menu.main]]
-identifier = "about"
-name = "About"
-url = "/about/"
-weight = 2
-
-[[menu.main]]
-identifier = "posts"
-name = "Posts"
-url = "/posts/"
-weight = 3
-
-[[menu.main]]
-identifier = "categories"
-name = "Categories"
-url = "/categories/"
-weight = 4
-
-[[menu.main]]
-identifier = "tags"
-name = "Tags"
-url = "/tags/"
-weight = 5
+paginate = 20
+pygmentsStyle = "bw"
+pygmentsCodeFences = true
+pygmentsCodeFencesGuessSyntax = true
 
 [params]
-abbrDateFmt = "Jan 2"
 author = "Dany Marcoux"
-brandIconFile = "images/brandIcon.svg"
-dateFmt = "01-02-2006"
-subtitle = ""
+description = "Blog of Dany Marcoux"
+keywords = "blog,web development,developer"
+info = "Full Stack Web Developer"
+gravatar = "dmarcoux@posteo.de"
+dateFormat = "January 2, 2006"
+hideFooter = true
+# Specify light/dark colorscheme
+# Supported values:
+# "auto" (use preference set by browser)
+# "dark" (dark background, light foreground)
+# "light" (light background, dark foreground) (default)
+colorScheme = "auto"
+# Hide the toggle button, along with the associated vertical divider
+hideColorSchemeToggle = false
+# Series see also post count
+maxSeeAlsoItems = 5
+
+[taxonomies]
+category = "categories"
+series = "series"
+tag = "tags"
+author = "authors"
 
 [[params.social]]
 name = "GitHub"
-url = "https://github.com/dmarcoux"
+icon = "fa fa-github"
+weight = 1
+url = "https://github.com/dmarcoux/"
+
+[[params.social]]
+name = "LinkedIn"
+icon = "fa fa-linkedin"
+weight = 2
+url = "https://www.linkedin.com/in/danymarcoux/"
+
+[[params.social]]
+name = "RSS"
+icon = "fa fa-rss"
+weight = 3
+url = "https://blog.dmarcoux.com/index.xml"
+rel = "alternate"
+type = "application/rss+xml"
+
+[[menu.main]]
+name = "Blog"
+weight = 1
+url = "posts/"
