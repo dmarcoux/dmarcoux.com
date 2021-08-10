@@ -1,0 +1,24 @@
+name: Lint
+
+on:
+  # Run this workflow when a commit is pushed to `main`
+  push:
+    branches:
+      - main
+  # Run this workflow on any PR targeting `main`
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions/checkout
+      - uses: actions/checkout@v2
+      # https://github.com/actions/setup-node
+      - uses: actions/setup-node@v2
+      - name: Install CLI for markdownlint
+        run: npm install markdownlint-cli2 --global
+      - name: Lint Markdown files, while excluding anything under the node_modules directory
+        run: markdownlint-cli2 "**/*.md" "#node_modules"
