@@ -6,6 +6,8 @@ paginate = 20
 pygmentsStyle = "solarized-light"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
+# Disable taxonomies
+disableKinds = ['taxonomy', 'term']
 
 [params]
 author = "Dany Marcoux"
@@ -18,12 +20,6 @@ hideFooter = true
 hideColorSchemeToggle = true
 # Series see also post count
 maxSeeAlsoItems = 5
-
-[taxonomies]
-category = "categories"
-series = "series"
-tag = "tags"
-author = "authors"
 
 [[params.social]]
 name = "GitHub"
