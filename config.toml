@@ -41,7 +41,7 @@ url = "https://www.linkedin.com/in/danymarcoux/"
 name = "RSS"
 icon = "fa fa-rss"
 weight = 3
-url = "https://blog.dmarcoux.com/index.xml"
+url = "posts/index.xml"
 rel = "alternate"
 type = "application/rss+xml"
 
