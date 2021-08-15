@@ -32,6 +32,12 @@ Run linter:
 markdownlint-cli2 "**/*.md" "#themes" "#node_modules"
 ```
 
+### Pull Changes From Git Submodules
+
+```bash
+git submodule update --remote
+```
+
 ## Production
 
 ### Host
