@@ -4,6 +4,12 @@
 
 ## Development
 
+### Create New Blog Post
+
+```bash
+hugo new posts/my-new-post.md
+```
+
 ### Web Server
 
 Start web server for development on localhost:1313
