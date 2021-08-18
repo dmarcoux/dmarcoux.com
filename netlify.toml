@@ -4,7 +4,7 @@ command = "hugo --gc --minify"
 
 [build.environment]
 # Same as my Hugo version (see the version number with `hugo version`)
-HUGO_VERSION = "0.86.0"
+HUGO_VERSION = "0.87.0"
 HUGO_ENV = "production"
 
 [context.deploy-preview]
@@ -12,4 +12,4 @@ command = "hugo --gc --minify --buildFuture --baseURL $DEPLOY_PRIME_URL"
 
 # Same as my Hugo version (see the version number with `hugo version`)
 [context.deploy-preview.environment]
-HUGO_VERSION = "0.86.0"
+HUGO_VERSION = "0.87.0"
