@@ -3,7 +3,7 @@ languageCode = "en"
 theme = "hugo-coder"
 title = "Dany Marcoux"
 paginate = 20
-pygmentsStyle = "solarized-light"
+pygmentsStyle = "borland"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 # Disable taxonomies
