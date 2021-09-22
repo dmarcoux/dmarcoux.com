@@ -1,0 +1,7 @@
+# Default state for all rules
+default: true
+
+# MD026/no-trailing-punctuation - Trailing punctuation in heading
+MD026:
+  # Punctuation characters
+  punctuation: ".,;:。，；："
