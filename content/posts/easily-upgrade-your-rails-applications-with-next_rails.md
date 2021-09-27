@@ -69,25 +69,29 @@ end
 ```
 
 With this module, you can then check if the application is currently running
-with the next *Rails* version.
+with the next *Rails* version. It can be in models, controllers, etc...
 
-*This code...*
+*This class...*
 
 ```ruby
-def something
-  'something'
+class Bicycle
+  def repair
+    'The bicycle is all fixed up!'
+  end
 end
 ```
 
 *...is adapted for the next Rails version:*
 
 ```ruby
-def something
-  # Code for the next Rails version
-  return 'something else' if RailsVersion.is_6_1?
+class Bicycle
+  def repair
+    # Code for the next Rails version
+    return 'Everything is repaired!' if RailsVersion.is_6_1?
 
-  # Code for the current Rails version
-  'something'
+    # Code for the current Rails version
+    'The bicycle is all fixed up!'
+  end
 end
 ```
 
@@ -96,16 +100,18 @@ guard clause or a `if...else` statement should be enough in most cases. If
 needed, you could also write a separate method like this:
 
 ```ruby
-def something
-  # Code for the next Rails version
-  return something_6_1 if RailsVersion.is_6_1?
+class Bicycle
+  def repair
+    # Code for the next Rails version
+    return repair_6_1 if RailsVersion.is_6_1?
 
-  # Code for the current Rails version
-  'something'
-end
+    # Code for the current Rails version
+    'The bicycle is all fixed up!'
+  end
 
-def something_6_1
-  # Do whatever needs to be done for the next Rails version
+  def repair_6_1
+    # Do whatever needs to be done for the next Rails version
+  end
 end
 ```
 
@@ -125,23 +131,27 @@ end
 
 The code for the newly upgraded *Rails* version is kept and the rest is removed.
 
-*This code...*
+*This class...*
 
 ```ruby
-def something
-  # Code for next Rails version
-  return 'something else' if RailsVersion.is_6_1?
+class Bicycle
+  def repair
+    # Code for next Rails version
+    return 'Everything is repaired!' if RailsVersion.is_6_1?
 
-  # Code for current Rails version
-  'something'
+    # Code for current Rails version
+    'The bicycle is all fixed up!'
+  end
 end
 ```
 
 *...is changed to:*
 
 ```ruby
-def something
-  'something else'
+class Bicycle
+  def repair
+    'Everything is repaired!'
+  end
 end
 ```
 
