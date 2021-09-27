@@ -1,7 +1,12 @@
 # Default state for all rules
 default: true
 
-# MD026/no-trailing-punctuation - Trailing punctuation in heading
+# Line length, 80 characters maximum
+MD013:
+  # Ignore code blocks
+  code_blocks: false
+
+# Trailing punctuation in headings
 MD026:
-  # Punctuation characters
+  # The following punctuation characters aren't accepted in headings
   punctuation: ".,;:。，；："
