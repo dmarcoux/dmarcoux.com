@@ -15,7 +15,7 @@ hugo new posts/my-new-post.md
 Start web server for development on localhost:1313
 
 ```bash
-hugo server -D
+hugo server -F
 ```
 
 ### Lint Markdown Files
