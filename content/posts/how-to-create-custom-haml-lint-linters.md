@@ -92,7 +92,7 @@ module HamlLint
     include LinterRegistry
 
     # Report an offense if the instance variable @pagetitle is not set in a
-    # Haml view. Partials aren't ignored by this linter.
+    # Haml view. Partials are ignored by this linter.
     #
     # @param [HamlLint::Tree::RootNode] the root of a syntax tree
     def visit_root(root_node)
