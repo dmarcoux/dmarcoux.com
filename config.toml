@@ -16,7 +16,6 @@ keywords = "blog,web development,developer"
 info = "Full Stack Web Developer"
 gravatar = "dmarcoux@posteo.de"
 dateFormat = "January 2, 2006"
-hideFooter = true
 # Series see also post count
 maxSeeAlsoItems = 5
 
