@@ -40,7 +40,7 @@ rel = "alternate"
 type = "application/rss+xml"
 
 [[menu.main]]
-name = "Blog"
+name = "Posts"
 weight = 1
 url = "posts/"
 
