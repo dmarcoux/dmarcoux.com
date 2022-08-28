@@ -32,9 +32,15 @@ weight = 2
 url = "https://www.linkedin.com/in/danymarcoux/"
 
 [[params.social]]
+name = "Twitter"
+icon = "fa fa-twitter"
+weight = 3
+url = "https://twitter.com/devmarcoux/"
+
+[[params.social]]
 name = "RSS"
 icon = "fa fa-rss"
-weight = 3
+weight = 4
 url = "posts/index.xml"
 rel = "alternate"
 type = "application/rss+xml"
