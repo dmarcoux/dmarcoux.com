@@ -4,7 +4,13 @@
 
 ## Development
 
-### Create New Blog Post
+Reproducible development environment for [Hugo](https://github.com/gohugoio/hugo)
+which relies on [Nix](https://github.com/NixOS/nix), a purely functional and
+cross-platform package manager.
+
+Start with `nix-shell --pure`.
+
+### Create Blog Post
 
 ```bash
 hugo new posts/my-new-post.md
@@ -20,22 +26,8 @@ hugo server -F
 
 ### Lint Markdown Files
 
-Install linter:
-
 ```bash
-npm install markdownlint-cli2 --global
-```
-
-Update linter:
-
-```bash
-npm update -g markdownlint-cli2
-```
-
-Run linter:
-
-```bash
-markdownlint-cli2 "**/*.md" "#themes" "#node_modules"
+lint
 ```
 
 ### Pull Changes From Git Submodules

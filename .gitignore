@@ -2,3 +2,6 @@
 /public/
 /resources/_gen/
 .hugo_build.lock
+
+# NPM from nix-shell
+.npm-packages/
