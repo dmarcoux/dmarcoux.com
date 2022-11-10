@@ -36,14 +36,15 @@ to enforce those rules.
 To begin, add the gem *haml_lint* in your *Gemfile* under the *development* and
 *test* groups. Do it manually or with this command:
 
-```bash
+{{< highlight bash >}}
 bundle add haml_lint --group=development,test
-```
+{{< / highlight >}}
 
 Let's now start with a simple example. In your *Rails* application, create the file
 *my_first_linter.rb* under the *lib/haml_lint/* directory. Here's the code:
 
-```ruby
+<!-- markdownlint-disable -->
+{{< highlight ruby >}}
 module HamlLint
   # MyFirstLinter is the name of the linter in this example, but it can be anything
   class Linter::MyFirstLinter < Linter
@@ -59,21 +60,24 @@ module HamlLint
     end
   end
 end
-```
+{{< / highlight >}}
+<!-- markdownlint-enable -->
 
 To use this linter, you need to enable it in your *haml_lint* configuration.  If
 you haven't already configured *haml_lint*, create the file *.haml_lint.yml* at
 the root of your *Rails* application. Those are the lines to add in your
 *haml_lint* configuration:
 
-```yaml
+<!-- markdownlint-disable -->
+{{< highlight yaml >}}
 require:
   - './lib/haml_lint/my_first_linter.rb'
 
 linters:
   MyFirstLinter:
     enabled: true
-```
+{{< / highlight >}}
+<!-- markdownlint-enable -->
 
 So from now on, whenever running *haml_lint*, this linter will report an
 offense for every `<div>` defined in a *Haml* view template. This isn't the most
@@ -86,7 +90,7 @@ variable `@pagetitle` is not set in a *Haml* view template. Again, same
 procedure as with the first linter. Under the *lib/haml_lint/* directory, create
 a file *set_pagetitle_in_view_linter.rb* with the following code:
 
-```ruby
+{{< highlight ruby >}}
 module HamlLint
   class Linter::SetPagetitleInView < Linter
     include LinterRegistry
@@ -128,12 +132,13 @@ module HamlLint
     end
   end
 end
-```
+{{< / highlight >}}
 
 Enable this linter in your *haml_lint* configuration file. This should be the
 content of *.haml_lint.yml*:
 
-```yaml
+<!-- markdownlint-disable -->
+{{< highlight yaml >}}
 require:
   - './lib/haml_lint/my_first_linter.rb'
   - './lib/haml_lint/set_pagetitle_in_view_linter.rb'
@@ -144,7 +149,8 @@ linters:
 
   SetPagetitleInView:
     enabled: true
-```
+{{< / highlight >}}
+<!-- markdownlint-enable -->
 
 With this example of a project-specific rule codified in a linter, it's now
 impossible to forget assigning a value to `@pagetitle` in a view template. Gone
