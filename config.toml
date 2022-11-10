@@ -14,7 +14,10 @@ author = "Dany Marcoux"
 description = "Blog of Dany Marcoux"
 keywords = "blog,web development,developer"
 info = "Full Stack Web Developer"
-avatarPath = "images/me.jpg" # Under static/
+# Images are under the static directory.
+# Hugo will use this image as the website thumbnail whenever sharing a blog post
+images = ["images/me.jpg"]
+avatarPath = "images/me.jpg"
 dateFormat = "January 2, 2006"
 # Series see also post count
 maxSeeAlsoItems = 5
