@@ -19,7 +19,7 @@ jobs:
         with:
           submodules: true # to include themes
       # https://github.com/actions/setup-node
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
       - name: Install CLI for markdownlint
         run: npm install markdownlint-cli2 --global
       - name: Lint Markdown files, while excluding anything under the themes and node_modules directories
