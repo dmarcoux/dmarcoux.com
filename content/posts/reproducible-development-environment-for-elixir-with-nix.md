@@ -6,7 +6,7 @@ date: 2022-11-09T19:56:45+01:00
 Recently, I started learning about *Elixir* and at first, I was somewhat unsure
 about how to setup my development environment. After reading the various
 recommendations from the *Elixir* community, my questions remained. This is when
-I asked on *Twitter*[^1] to gather more thoughts on the matter. It led me to
+I asked on *Twitter* to gather more thoughts on the matter. It led me to
 research further how I could setup a reproducible development environment for
 Elixir. I will share with you how I achieved this with *Nix*.
 
@@ -120,5 +120,3 @@ Regarding other *Nix* packages, you can find them with the [*Nix* Search](https:
 
 Let me know how it went for you by sending me a message on the [*Contact Me*
 page](/contact-me/). Constructive feedback is always welcomed!
-
-[^1]: https://twitter.com/devmarcoux/status/1581767359467237377
