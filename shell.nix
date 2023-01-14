@@ -16,6 +16,9 @@ mkShell {
     # Set LANG for locales, otherwise it is unset when running "nix-shell --pure"
     export LANG="C.UTF-8"
 
+    # Remove duplicate commands from Bash shell command history
+    export HISTCONTROL=ignoreboth:erasedups
+
     # Install NPM packages inside the project
     export NPM_CONFIG_PREFIX="$PWD/.npm-packages"
 
