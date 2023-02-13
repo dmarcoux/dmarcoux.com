@@ -14,7 +14,7 @@ author = "Dany Marcoux"
 description = "Blog of Dany Marcoux"
 keywords = "blog,web development,developer"
 info = "Full Stack Web Developer"
-gravatar = "dmarcoux@posteo.de"
+avatarPath = "images/me.jpg" # Under static/
 dateFormat = "January 2, 2006"
 # Series see also post count
 maxSeeAlsoItems = 5
