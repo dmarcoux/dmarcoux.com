@@ -149,7 +149,16 @@ This is how I configure *FolderSync* to work with *Scaleway*.
 ### On Scaleway
 
 I create an API key, then a policy for it. It can be restricted to only
-*Scaleway Object Storage* and *Scaleway Glacier*.
+*Scaleway Object Storage* and *Scaleway Glacier* depending on its permission
+sets. If somehow this API key is leaked, this wouldn't be great, but at least it
+can only read from and write to buckets by using the following permission sets:
+
+- *ObjectStorageBucketsRead*
+- *ObjectStorageBucketsWrite*
+- *ObjectStorageObjectsRead*
+- *ObjectStorageObjectsWrite*
+
+With this, the buckets and their content cannot be deleted.
 
 ### In FolderSync
 
