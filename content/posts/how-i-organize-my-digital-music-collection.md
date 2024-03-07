@@ -70,8 +70,11 @@ is in my
 
 ## Backing Up My Music Collection
 
-There are many backup solutions available online. I had a few criteria to guide
-my decision:
+Beside having my music both on my computer and my phone, I also back it up on my
+home server and a cloud provider.
+
+There are many cloud providers available. I had a few criteria to guide my
+decision:
 
 - Based in Europe, since this is where live.
 - Reliability
@@ -79,96 +82,87 @@ my decision:
 - Environmental impact
 - Pricing
 - Have a S3-compatible API to ease automation
-- Availability of cold storage for long term archival
+- Availability of cold storage for long-term archival
 
-With this in mind, this is why I went with [Scaleway](https://www.scaleway.com/)
-for their *Scaleway Object Storage* and *Scaleway Glacier* products.
+With this in mind, this is why I went with the cloud provider
+[Scaleway](https://www.scaleway.com/) for *Scaleway Glacier*, a subset of their
+*Scaleway Object Storage* product. It offers a *cold* storage solution for
+long-term archival in the Paris region. This is perfect for my needs.
 
 Backing up my music involves two steps, first with
 [rclone](https://rclone.org/). It is configurable with `rclone config`. The
 configuration is encrypted with a password stored in my password manager. This
-is how the remote I use is configured in *rclone*:
+is how the remotes I use are configured in *rclone*:
 
 {{< highlight plaintext >}}
-Remote "scaleway-storage-fra"
+[homeserver]
+type = sftp
+host = MY_HOMESERVER_IP
+user = MY_USER
 
-- type: s3
-- provider: Scaleway
-- access_key_id: MY_ACCESS_KEY_ID
-- secret_access_key: MY_SECRET_ACCESS_KEY
-- region: fr-par
-- endpoint: s3.fr-par.scw.cloud
-- acl: private
-- storage_class: ONEZONE_IA
+[scaleway-storage-fra-GLACIER]
+type = s3
+provider = Scaleway
+access_key_id = MY_ACCESS_KEY_ID
+secret_access_key = MY_SECRET_ACCESS_KEY
+region = fr-par
+endpoint = s3.fr-par.scw.cloud
+acl = private
+storage_class = GLACIER
 {{< / highlight >}}
 
-This remote is for buckets in the Paris region and by default, it will store
-files in a single data center. The redundancy from extra data centers isn't
-needed since I also put everything on *Scaleway Glacier*.
-
-Then it's as easy as running this to copy my music to my bucket on *Scaleway*:
+Here's how I upload my music to my home server:
 
 {{< highlight bash >}}
-rclone copy -P ~/music scaleway-storage-fra:my-music-collection
+rclone copy --progress --checksum ~/music homeserver:/path/to/music/directory
 {{< / highlight >}}
 
-`~/music` is the folder where my music is located, after it has been processed
-by *beets*. `scaleway-storage-fra` is the remote in *rclone*, then
-`my-music-collection` is the bucket name on *Scaleway Object Storage*.
+`~/music` is the folder where my music is located on my computer, after it has
+been processed by *beets*. `homeserver` is the remote in *rclone*, followed by
+the path to the music directory on my home server.
 
-Finally, I use `aws-cli2` to sync my bucket from *Scaleway Object Storage* to
-another bucket from *Scaleway Glacier*.
+As for uploading my music to *Scaleway Glacier*, my home server does it daily
+with a script containing this:
 
-I avoid storing credentials in plain text in `~/.aws/credentials`, instead
-passing them inline in environment variables. I have an alias
-([scw](https://github.com/dmarcoux/dotfiles/blob/a9b5425c4649674a0700bf97a04bb87c99c4f153/home-manager/scaleway.nix#L53))
-to achieve this without typing again and again those environment variables.
-
-<!-- markdownlint-disable -->
 {{< highlight bash >}}
-scw s3 sync s3://my-music-collection s3://my-music-collection-glacier --storage-class GLACIER
+rclone copy --progress --checksum ~/music scaleway-storage-fra-GLACIER:my-music-collection
 {{< / highlight >}}
-<!-- markdownlint-enable -->
 
-`my-music-collection` is the bucket on *Scaleway Object Storage*, while
-`my-music-collection-glacier` is the bucket on *Scaleway Glacier*. Do not forget
-to pass the `GLACIER` storage class, otherwise this is going to store everything
-in *Scaleway Object Storage*.
+This time, *rclone* uploads to the `scaleway-storage-fra-GLACIER` remote which
+stores files in *Scaleway Glacier*. `my-music-collection` is the bucket name on
+*Scaleway Glacier*.
 
 ## Getting My Music Collection To My Phone
 
 My phone's storage can be expanded via a SD card, so this is what I went with.
-To get my music collection onto the SD card, I either take it out and put it in
+To get my music collection onto the SD card, I could take it out and put it in
 my computer. This is rather cumbersome as I need to take out the battery every
-time. I usually rely on the [FolderSync app](https://foldersync.io/) on Android
-to easily sync my bucket on *Scaleway Object Storage* to my phone. This is
-especially convenient when only transferring a few songs.
+time. Instead, I usually rely on the [FolderSync app](https://foldersync.io/) on
+Android to easily sync my music from my home server to my phone while I'm in my
+local network. This is especially convenient when only transferring a few songs.
 
-This is how I configure *FolderSync* to work with *Scaleway*.
+And yes, I did give a try to the good old USB cable, but it's not reliable on
+Linux. Somehow, my phone isn't always detected by the OS and when it does, it
+sometimes gets disconnected for no apparent reason. Oh well... FolderSync it is
+then!
 
-### On Scaleway
+### How To Configure FolderSync
 
-I create an API key, then a policy for it. It can be restricted to only
-*Scaleway Object Storage* and *Scaleway Glacier* depending on its permission
-sets. If somehow this API key is leaked, this wouldn't be great, but at least it
-can only read from and write to buckets by using the following permission sets:
+On my home server, I have a user with read-only access. In FolderSync, create an
+account for SMB with this user's username and password. Enter the IP address of
+my home server, then the SMB share name where my music collection is stored.
+Pick SMB3 and enable *Require encryption*.
 
-- *ObjectStorageBucketsRead*
-- *ObjectStorageBucketsWrite*
-- *ObjectStorageObjectsRead*
-- *ObjectStorageObjectsWrite*
+Afterwards, create a folder pair with the sync type *To local folder*. Set the
+remote folder to the folder where my music collection is stored on my home
+server. As for the local folder, it is where I want to have my music collection
+on my phone, so as long as it's on the SD card, it's all good.
 
-With this, the buckets and their content cannot be deleted.
+Now for the *Sync options* of the folder pair, choose *Never* for the option
+*Overwrite old files* and choose *Use remote file* for the option *If both local
+and remote file have been modified*.
 
-### In FolderSync
-
-Create an account with the *Access key ID* and the *Secret access key*. Those
-fields refer to the API key on *Scaleway*. Afterwards, the *Server address* and
-*Region* refer to the bucket on *Scaleway Object Storage*, not on *Scaleway
-Glacier* since this would take much longer to download the files as they have to
-be restored. As an example for a bucket in the Paris region, the *Server
-address* would look like `s3.fr-par.scw.cloud/my-bucket-name` and the *Region*
-is `EUParis`.
+Finally, under *Advanced*, enable *Use MD5 checksums*.
 
 ## Final Countdown
 
