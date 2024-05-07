@@ -36,9 +36,14 @@ whipperteam/whipper:0.10.0 cd rip --prompt
 
 `--device=/dev/cdrom` refers to the CD drive in my computer.
 
+Both `--mount` options are bound to directories which must exist, otherwise the
+command won't work. It's as simple as running `mkdir -p "${HOME}/.config/whipper"
+"${HOME}/music-to-import"` to address this.
+
 The first `--mount` is to mount the *whipper* configuration into the *Docker*
 container. This configuration was generated with `whipper drive analyze`, so the
-same command as above, but by replacing `cd rip` for `drive analyze`.
+same command as above, but by replacing `cd rip` for `drive analyze`. After
+executing `drive analyze`, it is also needed to run `drive offset`.
 
 The second `--mount` is where *whipper* will output the songs from CDs it ripped.
 
