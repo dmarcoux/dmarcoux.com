@@ -12,8 +12,8 @@ disableKinds = ['taxonomy', 'term']
 [params]
 author = "Dany Marcoux"
 description = "Blog of Dany Marcoux"
-keywords = "blog,web development,developer,software engineer"
-info = "Senior Software Engineer"
+keywords = "blog,web development,developer,software engineer,devops engineer"
+info = "Senior Software/DevOps Engineer"
 avatarPath = "images/me.jpg" # Under static/
 dateFormat = "January 2, 2006"
 # Series see also post count
