@@ -36,8 +36,9 @@ mkShell {
     # Create alias to lint Markdown files
     alias lint="markdownlint-cli2 '**/*.md' '#themes' '#node_modules' '#$NPM_CONFIG_PREFIX'"
 
+    # TODO: This would be nice once configuration by file is available for Cloudflare Pages
     # Ensure `HUGO_VERSION` in `netlify.toml` matches the installed version of Hugo. This is a safeguard, since it's too easy to forget doing this...
-    hugo version | sed -e "s|hugo v\(.*\)+extended .*|\1|g" | xargs -I % sh -c "sed --in-place -e 's|HUGO_VERSION = .*|HUGO_VERSION = \"%\"|g' netlify.toml"
+    # hugo version | sed -e "s|hugo v\(.*\)+extended .*|\1|g" | xargs -I % sh -c "sed --in-place -e 's|HUGO_VERSION = .*|HUGO_VERSION = \"%\"|g' netlify.toml"
   '';
 
   # Without this, there are warnings about LANG, LC_ALL and locales.
