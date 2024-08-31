@@ -1,7 +1,5 @@
 # [dmarcoux/dmarcoux.com](https://github.com/dmarcoux/dmarcoux.com)
 
-![Netlify Status](https://api.netlify.com/api/v1/badges/5065c943-d1ba-49c8-942a-4ceea3e5dd80/deploy-status)
-
 ## Development
 
 Reproducible development environment for [Hugo](https://github.com/gohugoio/hugo)
@@ -40,17 +38,31 @@ git submodule update --remote
 
 ### Host
 
-The application is hosted on [Netlify](https://www.netlify.com/) and configured
-with [netlify.toml](./netlify.toml).
+The application is hosted on [Cloudflare](https://www.cloudflare.com/) and configured
+via the web UI.
 
-[Deploy
-notifications](https://docs.netlify.com/site-deploys/notifications/#github-pull-request-comments)
-are commenting in pull requests whenever the deploy preview is ready. The
-notification's event is `Deploy Preview succeeded`.
+[Preview
+deployments](https://developers.cloudflare.com/pages/configuration/preview-deployments)
+are commenting in pull requests whenever the deploy preview is ready.
 
 ### Domain
 
 The domain `dmarcoux.com` is managed on
-[Cloudflare](https://www.cloudflare.com/) with a `CNAME` record for `@`
-pointing to the default site name provided by Netlify. A custom domain is then
-set for `dmarcoux.com` on Netlify.
+[Cloudflare](https://www.cloudflare.com/) with a `CNAME` record for `@` pointing
+to the default site name provided by Cloudflare Pages.
+
+### Settings
+
+#### Build Configurations
+
+- Build command: `hugo --gc --minify`
+- Build output directory: `/public`
+- Root directory: `/`
+- Build comments on pull requests: `Enabled`
+
+#### Environment Variables
+
+The following environment variables are set for both `production` and `preview`.
+
+- `HUGO_ENV` with the value `production`
+- `HUGO_VERSION` with the value `0.105.0`
