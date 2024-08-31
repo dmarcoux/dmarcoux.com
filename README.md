@@ -1,4 +1,4 @@
-# [dmarcoux/blog.dmarcoux.com](https://github.com/dmarcoux/blog.dmarcoux.com)
+# [dmarcoux/dmarcoux.com](https://github.com/dmarcoux/dmarcoux.com)
 
 ![Netlify Status](https://api.netlify.com/api/v1/badges/5065c943-d1ba-49c8-942a-4ceea3e5dd80/deploy-status)
 
@@ -51,6 +51,6 @@ notification's event is `Deploy Preview succeeded`.
 ### Domain
 
 The domain `dmarcoux.com` is managed on
-[Cloudflare](https://www.cloudflare.com/) with a `CNAME` record for `blog`
+[Cloudflare](https://www.cloudflare.com/) with a `CNAME` record for `@`
 pointing to the default site name provided by Netlify. A custom domain is then
-set for `blog.dmarcoux.com` on Netlify.
+set for `dmarcoux.com` on Netlify.

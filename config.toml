@@ -1,4 +1,4 @@
-baseURL = "https://blog.dmarcoux.com/"
+baseURL = "https://dmarcoux.com/"
 languageCode = "en"
 theme = "hugo-coder"
 title = "Dany Marcoux"
@@ -11,8 +11,8 @@ disableKinds = ['taxonomy', 'term']
 
 [params]
 author = "Dany Marcoux"
-description = "Blog of Dany Marcoux"
-keywords = "blog,web development,developer,software engineer,devops engineer"
+description = "Dany Marcoux - Senior Software/DevOps Engineer"
+keywords = "software engineer,devops engineer"
 info = "Senior Software/DevOps Engineer"
 avatarPath = "images/me.jpg" # Under static/
 dateFormat = "January 2, 2006"
