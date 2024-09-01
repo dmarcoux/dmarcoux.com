@@ -1,7 +1,7 @@
----
-title: "How I Organize My Digital Music Collection on Linux"
-date: 2023-07-31T10:43:16+02:00
----
++++
+title = "How I Organize My Digital Music Collection on Linux"
+date = "2023-07-31"
++++
 
 I enjoy listening to music and some time ago after cancelling my subscription to
 a music streaming service, I decided to go back to owning music again. I
@@ -26,12 +26,12 @@ provided by the developers themselves.
 Here is an example of how I use *whipper* with *Docker*:
 
 <!-- markdownlint-disable -->
-{{< highlight bash >}}
+```bash
 docker run -ti --rm --device=/dev/cdrom \
 --mount type=bind,source=${HOME}/.config/whipper,target=/home/worker/.config/whipper \
 --mount type=bind,source=${HOME}/music-to-import,target=/output \
 whipperteam/whipper:0.10.0 cd rip --prompt
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 `--device=/dev/cdrom` refers to the CD drive in my computer.
@@ -65,9 +65,10 @@ that it fetches from [MusicBrainz](https://musicbrainz.org/). One cool thing
 about *beets* is how flexible it is with its various plugins.
 
 Command example to import music into my music collection:
-{{< highlight bash >}}
+
+```bash
 beet import path/to/music/album-1 path/to/music/album-2 (...)
-{{< / highlight >}}
+```
 
 For details on how I configured *beets* and some of its plugins, my configuration
 is in my
@@ -99,7 +100,7 @@ Backing up my music involves two steps, first with
 configuration is encrypted with a password stored in my password manager. This
 is how the remotes I use are configured in *rclone*:
 
-{{< highlight plaintext >}}
+```text
 [homeserver]
 type = sftp
 host = MY_HOMESERVER_IP
@@ -114,13 +115,13 @@ region = fr-par
 endpoint = s3.fr-par.scw.cloud
 acl = private
 storage_class = GLACIER
-{{< / highlight >}}
+```
 
 Here's how I upload my music to my home server:
 
-{{< highlight bash >}}
+```bash
 rclone copy --progress --checksum ~/music homeserver:/path/to/music/directory
-{{< / highlight >}}
+```
 
 `~/music` is the folder where my music is located on my computer, after it has
 been processed by *beets*. `homeserver` is the remote in *rclone*, followed by
@@ -129,9 +130,9 @@ the path to the music directory on my home server.
 As for uploading my music to *Scaleway Glacier*, my home server does it daily
 with a script containing this:
 
-{{< highlight bash >}}
+```bash
 rclone copy --progress --checksum ~/music scaleway-storage-fra-GLACIER:my-music-collection
-{{< / highlight >}}
+```
 
 This time, *rclone* uploads to the `scaleway-storage-fra-GLACIER` remote which
 stores files in *Scaleway Glacier*. `my-music-collection` is the bucket name on

@@ -1,7 +1,7 @@
----
-title: Easily Upgrade Your Rails Applications With next_rails
-date: 2021-08-13T12:00:00+02:00
----
++++
+title = "Easily Upgrade Your Rails Applications With next_rails"
+date = "2021-08-13"
++++
 
 Did you ever wish you could upgrade your *Rails* applications without doing it
 all at once? This would make everything much easier, right?
@@ -18,19 +18,19 @@ code. Let's start!
 *next_rails* is a gem and you should add it in your *Gemfile* under the
 *development* group. Do it manually or with this command:
 
-{{< highlight bash >}}
+```bash
 bundle add next_rails --group=development
-{{< / highlight >}}
+```
 
 Once *next_rails* is installed, you set it up with `next --init`. This command
 slightly changes your *Gemfile* while also creating *Gemfile.next*, a symlink to
 your *Gemfile*. The following lines are added to your *Gemfile*:
 
-{{< highlight ruby >}}
+```ruby
 def next?
   File.basename(__FILE__) == "Gemfile.next"
 end
-{{< / highlight >}}
+```
 
 The last step to setup *next_rails* is to add a `if...else` statement to your
 *Gemfile* under the newly introduced `next?` method. This replaces the usual
@@ -38,7 +38,7 @@ The last step to setup *next_rails* is to add a `if...else` statement to your
 forget to delete that line too.
 
 <!-- markdownlint-disable -->
-{{< highlight ruby >}}
+```ruby
 if next?
   # This is the next Rails version your application will run
   gem 'rails', '~> 6.1'
@@ -46,7 +46,7 @@ else
   # This is the Rails version your application currently runs
   gem 'rails', '~> 6.0'
 end
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 To run *Bundler* with the next *Rails* version, you can prefix any *Bundler*
@@ -62,14 +62,14 @@ In the directory *lib* located at the root of your *Rails* application, define a
 new module `RailsVersion`:
 
 <!-- markdownlint-disable -->
-{{< highlight ruby >}}
+```ruby
 # lib/rails_version.rb
 module RailsVersion
   def self.is_6_1?
     Rails::VERSION::MAJOR == 6 && Rails::VERSION::MINOR == 1
   end
 end
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 With this module, you can then check if the application is currently running
@@ -77,17 +77,17 @@ with the next *Rails* version. It can be in models, controllers, etc...
 
 *This class...*
 
-{{< highlight ruby >}}
+```ruby
 class Bicycle
   def repair
     'The bicycle is all fixed up!'
   end
 end
-{{< / highlight >}}
+```
 
 *...is adapted for the next Rails version:*
 
-{{< highlight ruby >}}
+```ruby
 class Bicycle
   def repair
     # Code for the next Rails version
@@ -97,13 +97,13 @@ class Bicycle
     'The bicycle is all fixed up!'
   end
 end
-{{< / highlight >}}
+```
 
 Adapting code for the next *Rails* version doesn't have to be complicated. A
 guard clause or a `if...else` statement should be enough in most cases. If
 needed, you could also write a separate method like this:
 
-{{< highlight ruby >}}
+```ruby
 class Bicycle
   def repair
     # Code for the next Rails version
@@ -117,7 +117,7 @@ class Bicycle
     # Do whatever needs to be done for the next Rails version
   end
 end
-{{< / highlight >}}
+```
 
 ## How to Roll Out the Next *Rails* Version
 
@@ -125,21 +125,21 @@ You can safely upgrade the *Rails* version in the *Gemfile* once all issues
 arising from the next *Rails* version have been addressed:
 
 <!-- markdownlint-disable -->
-{{< highlight ruby >}}
+```ruby
 if next?
   gem 'rails', '~> 6.1'
 else
   # Now the same version as above
   gem 'rails', '~> 6.1'
 end
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 The code for the newly upgraded *Rails* version is kept and the rest is removed.
 
 *This class...*
 
-{{< highlight ruby >}}
+```ruby
 class Bicycle
   def repair
     # Code for next Rails version
@@ -149,17 +149,17 @@ class Bicycle
     'The bicycle is all fixed up!'
   end
 end
-{{< / highlight >}}
+```
 
 *...is changed to:*
 
-{{< highlight ruby >}}
+```ruby
 class Bicycle
   def repair
     'Everything is repaired!'
   end
 end
-{{< / highlight >}}
+```
 
 ## How to Keep *Gemfile.next.lock* Up-to-Date
 
@@ -169,15 +169,15 @@ default *Gemfile.lock*. This is how you can achieve this:
 
 1. Overwrite *Gemfile.next.lock* with a copy of *Gemfile.lock*:
 
-   {{< highlight bash >}}
+   ```bash
    cp Gemfile.lock Gemfile.next.lock
-   {{< / highlight >}}
+   ```
 
 2. Inside your development environment, update the *Rails* version:
 
-   {{< highlight bash >}}
+   ```bash
    next bundle update rails
-   {{< / highlight >}}
+   ```
 
 3. Create a pull request with the changes or commit them to a branch, this
    depends on your project.

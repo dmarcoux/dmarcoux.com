@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<main>
+    <article>
+        <div class="title">
+            {{ post_macros::page_header(title=page.title,mimick_shell=false) }}
+
+                <div class="meta">
+                    {% if page.date %}
+                        Posted on <time>{{ page.date | date(format="%d/%b/%Y") }}</time>
+                    {% endif %}
+
+                    {% if page.updated %}
+                        :: Updated on <time>{{ page.updated | date(format="%d/%b/%Y") }}</time>
+                    {% endif %}
+
+                    {% if page.extra.read_time %}
+                        :: <time>{{ page.reading_time }}</time> Min Read
+                    {% endif %}
+
+                    {# Inline display of tags directly after the date #}
+                    {% if page.taxonomies and page.taxonomies.tags %}
+                            <span class="tags-label"> :: Tags:</span>
+                            <span class="tags">
+                                {%- for tag in page.taxonomies.tags %}
+                                    <a href="{{ get_taxonomy_url(kind='tags', name=tag) }}" class="post-tag">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </span>
+                    {% endif %}
+
+                    {% if page.draft %}
+                        <span class="draft-label">DRAFT</span>
+                    {% endif %}
+
+                </div>
+        </div>
+
+        {% if page.extra.tldr %}
+            <div class="tldr">
+                <strong>tl;dr:</strong>
+                {{ page.extra.tldr }}
+            </div>
+        {% endif %}
+
+        {# Optional table of contents #}
+        {% if config.extra.toc | default(value=false) %}
+        {% if page.toc %}
+            <div class="toc-container">
+                <h1 class="toc-title">Table of Contents</h1>
+                <ul class="toc-list">
+                    {% for h1 in page.toc %}
+                        <li>
+                            <a href="{{ h1.permalink | safe }}">{{ h1.title }}</a>
+                            {% if h1.children %}
+                                <ul>
+                                    {% for h2 in h1.children %}
+                                        <li>
+                                            <a href="{{ h2.permalink | safe }}">{{ h2.title }}</a>
+                                        </li>
+
+                                        {% if h2.children %}
+                                            <ul>
+                                                {% for h3 in h2.children %}
+                                                    <li>
+                                                        <a href="{{ h3.permalink | safe }}">{{ h3.title }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% endif %}
+
+        <section class="body">
+            {{ page.content | safe }}
+        </section>
+    </article>
+</main>
+{% endblock main_content %}

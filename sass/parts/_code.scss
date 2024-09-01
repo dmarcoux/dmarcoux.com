@@ -1,0 +1,105 @@
+// Define base colors and fonts
+:root {
+    --code-font: 'Courier New', monospace;
+    --bg-primary: var(--bg-1);
+    --label-color: #f0f0f0; // Text color of the label
+
+    --hightlight-color: #f0f0f0;
+}
+
+.code-label {
+    background: var(--primary-color);
+    color: var(--label-color);
+    border-radius: 0 0 0.25rem 0.25rem;
+    font-size: 12px;
+    letter-spacing: 0.025rem;
+    padding: 0.1rem 0.5rem;
+    text-align: right;
+    text-transform: uppercase;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 0.1rem;
+}
+
+code {
+    background-color: rgb(40, 42, 54);
+    color: rgb(248, 248, 242);
+    padding: 0.1em 0.2em;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    font-family: var(--code-font);
+}
+
+pre {
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    line-height: 1.4;
+    overflow-x: auto;
+    padding: 1em;
+    position: relative;
+
+    mark {
+        padding: 0;
+        border-radius: 0px;
+    }
+
+    code {
+        background-color: transparent !important;
+        color: var(--text-color);
+        font-size: 100%;
+        padding: 0;
+        border: none;
+        font-family: var(--code-font);
+
+        table {
+            margin: 0;
+            border-collapse: collapse;
+            font-family: var(--code-font);
+
+            mark {
+                display: block;
+                color: unset;
+                padding: 0;
+                filter: brightness(1.2); // Example to slightly increase brightness
+            }
+
+        }
+
+        td,
+        th,
+        tr {
+            padding: 0;
+            border-bottom: none;
+            border: none; // Ensure no borders around rows
+        }
+
+        tbody td:first-child {
+            text-align: center;
+            user-select: none;
+            min-width: 60px;
+            border-right: none,
+        }
+
+        tbody tr:nth-child(even),
+        thead tr {
+            background-color: unset;
+        }
+    }
+}
+
+.clipboard-button,
+.clipboard-button svg {
+    all: unset;
+    cursor: pointer;
+    position: absolute;
+    bottom: 5px;
+    /* 5px from the bottom */
+    right: 5px;
+    /* 5px from the right */
+    z-index: 10;
+    background-color: transparent;
+    border: none;
+    fill: #ef5350;
+    /* Sets the color of the SVG, assuming it's an SVG icon */
+}
