@@ -43,8 +43,3 @@ type = "application/rss+xml"
 name = "Posts"
 weight = 1
 url = "posts/"
-
-[[menu.main]]
-name = "Contact Me"
-weight = 2
-url = "contact-me/"

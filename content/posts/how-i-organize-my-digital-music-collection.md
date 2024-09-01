@@ -172,4 +172,4 @@ Finally, under *Advanced*, enable *Use MD5 checksums*.
 ## Final Countdown
 
 That's it, I hope this helped you. How do you setup your digital music
-collection? Let me know what you think through my *Contact Me* form.
+collection?
