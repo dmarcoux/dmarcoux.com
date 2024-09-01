@@ -184,6 +184,4 @@ default *Gemfile.lock*. This is how you can achieve this:
 
 ## How Did It Go For You?
 
-This is it, you're set to use *next_rails* in your *Rails* applications. Let me
-know how it went for you by sending me a message on the [*Contact Me*
-page](/contact-me/). Constructive feedback is always welcomed!
+This is it, you're set to use *next_rails* in your *Rails* applications.

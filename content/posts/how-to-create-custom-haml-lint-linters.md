@@ -193,6 +193,4 @@ how linters are built.
 ## Lint All The Things!
 
 It's now time for you to create custom *haml_lint* linters for *Haml* view
-templates in your *Rails* applications. Let me know how it went for you by
-sending me a message on the [*Contact Me* page](/contact-me/). Constructive
-feedback is always welcomed!
+templates in your *Rails* applications.

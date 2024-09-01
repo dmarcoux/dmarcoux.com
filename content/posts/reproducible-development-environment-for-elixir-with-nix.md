@@ -118,5 +118,4 @@ Regarding other *Nix* packages, you can find them with the [*Nix* Search](https:
 
 ## Will You Reproduce This?
 
-Let me know how it went for you by sending me a message on the [*Contact Me*
-page](/contact-me/). Constructive feedback is always welcomed!
+Give it a try!
