@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+    <main>
+        <article>
+            <section class="body">
+                {{post_macros::page_header(title=section.title)}}
+                {{ section.content | safe }}
+
+                <h2>Skills</h2>
+
+                <ul style="padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 1.5rem 2rem; list-style: none;">
+                    <li style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="{{ get_url(path="images/web_development.svg") }}" height="80" />
+                        <span>Web Development</span>
+                    </li>
+                    <li style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="{{ get_url(path="images/linux.svg") }}" height="80" />
+                        <span>Linux</span>
+                    </li>
+                    <li style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="{{ get_url(path="images/devops.svg") }}" height="80" />
+                        <span>DevOps</span>
+                    </li>
+                    <li style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="{{ get_url(path="images/ruby.svg") }}" height="80" />
+                        <span>Ruby</span>
+                    </li>
+                    <li style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="{{ get_url(path="images/docker.svg") }}" height="80" />
+                        <span>Docker</span>
+                    </li>
+                </ul>
+            </section>
+        </article>
+    </main>
+{% endblock main_content %}
+
+

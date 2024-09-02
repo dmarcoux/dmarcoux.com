@@ -2,36 +2,36 @@
 
 ## Development
 
-Reproducible development environment for [Hugo](https://github.com/gohugoio/hugo)
+Reproducible development environment for [Zola](https://github.com/getzola/zola)
 which relies on [Nix](https://github.com/NixOS/nix), a purely functional and
 cross-platform package manager.
 
 Start with `nix-shell --pure`.
 
-### Create Blog Post
+### Create Page / Blog Post
 
-```bash
-hugo new posts/my-new-post.md
+There is no built-in command for this in Zola, simply copy from one of the
+existing pages or create a file with only the frontmatter like:
+
+```markdown
++++
+title = "My page"
+(...)
++++
 ```
 
 ### Web Server
 
-Start web server for development on localhost:1313
+Start web server for development on localhost:1111
 
 ```bash
-hugo server -F
+zola serve
 ```
 
 ### Lint Markdown Files
 
 ```bash
 lint
-```
-
-### Pull Changes From Git Submodules
-
-```bash
-git submodule update --remote
 ```
 
 ## Production
@@ -55,7 +55,7 @@ to the default site name provided by Cloudflare Pages.
 
 #### Build Configurations
 
-- Build command: `hugo --gc --minify`
+- Build command: `zola build`
 - Build output directory: `/public`
 - Root directory: `/`
 - Build comments on pull requests: `Enabled`
@@ -64,5 +64,8 @@ to the default site name provided by Cloudflare Pages.
 
 The following environment variables are set for both `production` and `preview`.
 
-- `HUGO_ENV` with the value `production`
-- `HUGO_VERSION` with the value `0.105.0`
+- `ZOLA_VERSION` with the value `0.19.2`
+
+## Credits
+
+- I've based my theme on [Apollo](https://github.com/not-matthias/apollo).

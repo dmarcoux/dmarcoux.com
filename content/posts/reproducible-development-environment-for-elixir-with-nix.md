@@ -1,7 +1,7 @@
----
-title: "Reproducible Development Environment for Elixir with Nix"
-date: 2022-11-09T19:56:45+01:00
----
++++
+title = "Reproducible Development Environment for Elixir with Nix"
+date = "2022-11-09"
++++
 
 Recently, I started learning about *Elixir* and at first, I was somewhat unsure
 about how to setup my development environment. After reading the various
@@ -47,7 +47,7 @@ you through what happens. You can horizontally scroll in the code block below if
 it's not fully visible on your device.
 
 <!-- markdownlint-disable -->
-{{< highlight nix "linenos=table,anchorlinenos=true,lineanchors=shell.nix">}}
+```nix
 # To ensure this nix-shell is reproducible, we pin the packages index
 # to a commit SHA taken from a channel on https://status.nixos.org/.
 # This commit is from the nixos-22.05 channel, the current stable channel.
@@ -106,7 +106,7 @@ in
     # This is from https://gist.github.com/aabs/fba5cd1a8038fb84a46909250d34a5c1
     LOCALE_ARCHIVE = "${glibcLocales}/lib/locale/locale-archive";
   }
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 Give this *nix-shell* a try by copying it in one of your *Elixir* projects, then

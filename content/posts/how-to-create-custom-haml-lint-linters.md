@@ -1,7 +1,7 @@
----
-title: How to Create Custom haml_lint Linters
-date: 2021-09-27T20:35:22+02:00
----
++++
+title = "How to Create Custom haml_lint Linters"
+date = "2021-09-27"
++++
 
 The majority of software engineering teams have rules, guidelines or standards
 for the code they write. While enforcing those manually can definitely work on
@@ -36,15 +36,15 @@ to enforce those rules.
 To begin, add the gem *haml_lint* in your *Gemfile* under the *development* and
 *test* groups. Do it manually or with this command:
 
-{{< highlight bash >}}
+```bash
 bundle add haml_lint --group=development,test
-{{< / highlight >}}
+```
 
 Let's now start with a simple example. In your *Rails* application, create the file
 *my_first_linter.rb* under the *lib/haml_lint/* directory. Here's the code:
 
 <!-- markdownlint-disable -->
-{{< highlight ruby >}}
+```ruby
 module HamlLint
   # MyFirstLinter is the name of the linter in this example, but it can be anything
   class Linter::MyFirstLinter < Linter
@@ -60,7 +60,7 @@ module HamlLint
     end
   end
 end
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 To use this linter, you need to enable it in your *haml_lint* configuration.  If
@@ -69,14 +69,14 @@ the root of your *Rails* application. Those are the lines to add in your
 *haml_lint* configuration:
 
 <!-- markdownlint-disable -->
-{{< highlight yaml >}}
+```yaml
 require:
   - './lib/haml_lint/my_first_linter.rb'
 
 linters:
   MyFirstLinter:
     enabled: true
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 So from now on, whenever running *haml_lint*, this linter will report an
@@ -90,7 +90,7 @@ variable `@pagetitle` is not set in a *Haml* view template. Again, same
 procedure as with the first linter. Under the *lib/haml_lint/* directory, create
 a file *set_pagetitle_in_view_linter.rb* with the following code:
 
-{{< highlight ruby >}}
+```ruby
 module HamlLint
   class Linter::SetPagetitleInView < Linter
     include LinterRegistry
@@ -132,13 +132,13 @@ module HamlLint
     end
   end
 end
-{{< / highlight >}}
+```
 
 Enable this linter in your *haml_lint* configuration file. This should be the
 content of *.haml_lint.yml*:
 
 <!-- markdownlint-disable -->
-{{< highlight yaml >}}
+```yaml
 require:
   - './lib/haml_lint/my_first_linter.rb'
   - './lib/haml_lint/set_pagetitle_in_view_linter.rb'
@@ -149,7 +149,7 @@ linters:
 
   SetPagetitleInView:
     enabled: true
-{{< / highlight >}}
+```
 <!-- markdownlint-enable -->
 
 With this example of a project-specific rule codified in a linter, it's now

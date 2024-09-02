@@ -1,45 +1,48 @@
-baseURL = "https://dmarcoux.com/"
-languageCode = "en"
-theme = "hugo-coder"
+# The URL the site will be built for
+base_url = "/" # For Zola to use relative paths instead of absolute paths for assets
+
+# The site title and description; used in feeds by default.
 title = "Dany Marcoux"
-paginate = 20
-pygmentsStyle = "borland"
-pygmentsCodeFences = true
-pygmentsCodeFencesGuessSyntax = true
-# Disable taxonomies
-disableKinds = ['taxonomy', 'term']
+description = "Senior Software/DevOps Engineer"
 
-[params]
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
+
+# The generated HTML files are minified.
+minify_html = false
+
+# The default language; used in feeds.
+default_language = "en"
+
+# The default author for pages
 author = "Dany Marcoux"
-description = "Dany Marcoux - Senior Software/DevOps Engineer"
-keywords = "software engineer,devops engineer"
-info = "Senior Software/DevOps Engineer"
-avatarPath = "images/me.jpg" # Under static/
-dateFormat = "January 2, 2006"
-# Series see also post count
-maxSeeAlsoItems = 5
 
-[[params.social]]
-name = "GitHub"
-icon = "fa fa-github"
-weight = 1
-url = "https://github.com/dmarcoux/"
+[markdown]
+# Whether to do syntax highlighting
+# https://www.getzola.org/documentation/content/syntax-highlighting/
+highlight_code = true
+highlight_theme = "dracula"
 
-[[params.social]]
-name = "LinkedIn"
-icon = "fa fa-linkedin"
-weight = 2
-url = "https://www.linkedin.com/in/danymarcoux/"
+[extra]
+# TODO
+# favicon = "/icon/favicon.png"
 
-[[params.social]]
-name = "RSS"
-icon = "fa fa-rss"
-weight = 3
-url = "posts/index.xml"
-rel = "alternate"
-type = "application/rss+xml"
+# Add the language label and a copy button to code blocks
+fancy_code = true
+# Do not allow the creation of expandable/collapsible note sections in pages
+dynamic_note = false
 
-[[menu.main]]
-name = "Posts"
-weight = 1
-url = "posts/"
+menu = [
+    { name = "/posts", url = "/posts", weight = 1 },
+    # TODO: { name = "/whoami", url = "/whoami", weight = 2 },
+]
+
+socials = [
+    { name = "GitHub", url = "https://github.com/dmarcoux/", icon = "github" },
+    { name = "LinkedIn", url = "https://www.linkedin.com/in/danymarcoux/", icon = "linkedin" },
+]
+
+custom_css = []
