@@ -6,7 +6,7 @@
     {% endif -%}
 
     {% block title %}
-        {{ post_macros::page_header(title=section.title) }}
+        {{ post_macros::page_header(title=section.extra.command) }}
     {% endblock title %}
 
     {% block post_list %}

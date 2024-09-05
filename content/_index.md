@@ -1,5 +1,8 @@
 +++
-title = "motd"
+title = "Software / DevOps Engineer"
+
+[extra]
+command = "motd"
 # Default template loaded from the theme will be `templates/index.html`
 +++
 
