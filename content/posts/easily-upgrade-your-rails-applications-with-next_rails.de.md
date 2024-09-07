@@ -1,0 +1,1 @@
+easily-upgrade-your-rails-applications-with-next_rails.md

@@ -4,6 +4,14 @@
 <main>
     <article>
         <div class="title">
+            {% if lang != "en" %}
+                <div class="note-container">
+                    <div class="note-content">
+                        <p>Die Blogeinträge sind momentan nur auf Englisch verfügbar.</p>
+                    </div>
+                </div>
+            {% endif %}
+
             {{ post_macros::page_header(title=page.title,mimick_shell=false) }}
 
                 <div class="meta">

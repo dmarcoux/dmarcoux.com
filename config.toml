@@ -26,6 +26,10 @@ author = "Dany Marcoux"
 highlight_code = true
 highlight_theme = "dracula"
 
+[languages.de]
+title = "Dany Marcoux"
+description = "Senior Software/DevOps Engineer"
+
 [extra]
 # TODO
 # favicon = "/icon/favicon.png"
@@ -36,8 +40,8 @@ fancy_code = true
 dynamic_note = false
 
 menu = [
-    { name = "/posts", url = "/posts", weight = 1 },
-    # TODO: { name = "/whoami", url = "/whoami", weight = 2 },
+    { name = "/posts", url = "posts", weight = 1 },
+    # TODO: { name = "/whoami", url = "whoami", weight = 2 },
 ]
 
 socials = [
