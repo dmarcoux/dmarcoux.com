@@ -3,7 +3,7 @@ base_url = "/" # For Zola to use relative paths instead of absolute paths for as
 
 # The site title and description; used in feeds by default.
 title = "Dany Marcoux"
-description = "Senior Software/DevOps Engineer"
+description = "Software/DevOps Engineer"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -28,7 +28,7 @@ highlight_theme = "dracula"
 
 [languages.de]
 title = "Dany Marcoux"
-description = "Senior Software/DevOps Engineer"
+description = "Software/DevOps Engineer"
 
 [extra]
 # TODO
