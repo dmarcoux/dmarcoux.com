@@ -36,8 +36,6 @@ description = "Software/DevOps Engineer"
 
 # Add the language label and a copy button to code blocks
 fancy_code = true
-# Do not allow the creation of expandable/collapsible note sections in pages
-dynamic_note = false
 
 menu = [
     { name = "/posts", url = "posts", weight = 1 },
