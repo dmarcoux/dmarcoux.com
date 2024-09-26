@@ -1,7 +1,7 @@
 +++
 title = "Manage a Music Collection on Linux with whipper, beets, Terraform and rclone"
 date = "2023-07-31"
-updated = "2024-09-26"
+updated = "2024-09-27"
 # TODO: This doesn't work with multilingual pages due to the symlink
 # aliases = ["how-i-organize-my-digital-music-collection"]
 +++
@@ -98,23 +98,23 @@ With this in mind, this is why I went with the cloud provider
 *Scaleway Object Storage* product. It offers a *cold* storage solution for
 long-term archival in the Paris region. This is perfect for my needs.
 
-### Provisioning the Bucket with Terraform
+### Provisioning the Infrastructure with Terraform
 
-While I could create the bucket in the *Scaleway Glacier* web UI, I always
+While I could create the infrastructure in the *Scaleway* web UI, I always
 prefer to achieve this through code. *Terraform*, an Infrastructure as
 Code (IaC) tool, is a great fit for this.
 
-Here's how I create a bucket on *Scaleway Glacier* with *Terraform*. Let's first
-write a *Terraform* configuration in `main.tf`. Be sure to replace the
-placeholders and if needed, adapt the zone and region:
+What I need is:
 
-- `BUCKET_NAME` ― The bucket name must be globally unique, so across all
-  *Scaleway*'s buckets.
-- `IAM_USER_ID` ― An IAM user which should have access to the bucket if
-  needed, for example via the web UI or the *AWS* CLI with `aws s3`.
-- `IAM_APPLICATION_ID` and `IAM_APPLICATION_NAME` ― The ID and name of an IAM
-  application with limited privileges to sync objects in the bucket via `rclone`.
+- a bucket to store my music collection
+- an IAM application with limited privileges to sync my music in the bucket via `rclone`
 
+Let's first write a *Terraform* configuration file named `main.tf`. Be sure to
+replace the placeholder `BUCKET_NAME` and the values in `locals`. Remember that
+the bucket name must be globally unique, so across all *Scaleway*'s buckets. If
+needed, adapt the zone and region.
+
+<!-- markdownlint-disable -->
 ```terraform
 terraform {
   required_providers {
@@ -131,6 +131,48 @@ provider "scaleway" {
   region = "fr-par"
 }
 
+locals {
+  # Found at https://console.scaleway.com/iam/users
+  # An IAM user which should have access to the bucket if needed, for example
+  # via the web UI or the AWS CLI with `aws s3`. It could be the default IAM
+  # user, but it does not have to.
+  IAM_user_id = "11111111-1111-1111-1111-111111111111"
+  # Found at https://console.scaleway.com/project
+  project_id = "11111111-1111-1111-1111-111111111111"
+}
+
+# IAM application with limited privileges to sync objects in the bucket via `rclone`
+resource "scaleway_iam_application" "API-Object_Storage" {
+  name        = "API - Object Storage"
+  description = "This is to restrict an API key only to the Object Storage buckets"
+}
+
+resource "scaleway_iam_policy" "API-Object_Storage" {
+  name = "Object Storage - Buckets Read Write - Objects Read Write Delete"
+  application_id = scaleway_iam_application.API-Object_Storage.id
+  rule {
+      permission_set_names = [
+          "ObjectStorageBucketsRead",
+          "ObjectStorageBucketsWrite",
+          "ObjectStorageObjectsDelete",
+          "ObjectStorageObjectsRead",
+          "ObjectStorageObjectsWrite",
+      ]
+      project_ids = [
+          local.project_id,
+      ]
+  }
+}
+
+# When looking at the state of a resource, its sensitive values will always be masked.
+# I still need to store the secret key of the API key in my password manager.
+# The command below returns the secret key:
+# terraform show -json | jq -r '.values.root_module.resources[] | select(.address=="scaleway_iam_api_key.API-Object_Storage").values.secret_key'
+resource "scaleway_iam_api_key" "API-Object_Storage" {
+  application_id = scaleway_iam_application.API-Object_Storage.id
+}
+
+# Bucket
 resource "scaleway_object_bucket" "BUCKET_NAME" {
   name = "BUCKET_NAME"
 }
@@ -145,15 +187,16 @@ resource "scaleway_object_bucket_policy" "BUCKET_NAME" {
   policy = templatefile("${path.module}/bucket_policy.tftpl", {
     bucket_name = scaleway_object_bucket.BUCKET_NAME.name,
     IAM_user_id = IAM_USER_ID,
-    IAM_application_id = IAM_APPLICATION_ID
-    IAM_application_name = IAM_APPLICATION_NAME
+    IAM_application_id = scaleway_iam_application.API-Object_Storage.id,
+    IAM_application_name = scaleway_iam_application.API-Object_Storage.name
   })
 }
 ```
+<!-- markdownlint-enable -->
 
-The bucket policy is in a *Terraform* template file (`bucket_policy.tftpl`) as
-the JSON document of a policy can be sometimes quite large, I find this approach
-much easier to reason about than having everything together.
+The bucket policy is in a *Terraform* template file (`bucket_policy.tftpl`).
+Since the JSON document of a policy can be sometimes quite large, I find this
+approach much easier to reason about than having everything together.
 
 <!-- markdownlint-disable -->
 ```terraform
@@ -203,12 +246,15 @@ ${jsonencode({
 <!-- markdownlint-enable -->
 
 For *Terraform* to provision the bucket, it must first authenticate to
-*Scaleway*, so I have to create an API key for an IAM user or application. I
-store the *Access Key Id* and *Secret Key* of this API key in my password
-manager (*1Password*) and rely on environment variables to avoid storing secrets
-on disk. With the help of [direnv](https://direnv.net/), environment variables
-are automatically exported/unexported whenever I enter/leave the directory
-containing this `.envrc` file:
+*Scaleway*. It's simple, I create an API key for my IAM user and store its
+*Access Key Id* and *Secret Key* in my password manager (*1Password*). This
+isn't the same API key as the one created above with *Terraform*, it must have
+the permissions to create resources for my *Scaleway* account.
+
+By relying on environment variables, I avoid storing secrets on disk. With the
+help of [direnv](https://direnv.net/), environment variables are automatically
+exported/unexported whenever I enter/leave the directory containing this
+`.envrc` file:
 
 ```bash
 export SCW_ACCESS_KEY="$(op read 'op://reference/to/Access Key Id')"
@@ -235,13 +281,16 @@ user = MY_USER
 [scaleway-storage-fra-GLACIER]
 type = s3
 provider = Scaleway
-access_key_id = MY_ACCESS_KEY_ID
-secret_access_key = MY_SECRET_ACCESS_KEY
+access_key_id = ACCESS_KEY_ID
+secret_access_key = SECRET_ACCESS_KEY
 region = fr-par
 endpoint = s3.fr-par.scw.cloud
 acl = private
 storage_class = GLACIER
 ```
+
+The placeholders `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` both refer to the API
+key belonging to the IAM application created above with *Terraform*.
 
 Here's how I upload my music to my home server:
 
