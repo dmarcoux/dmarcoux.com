@@ -1,6 +1,9 @@
 +++
-title = "How I Organize My Digital Music Collection on Linux"
+title = "Manage a Music Collection on Linux with whipper, beets, Terraform and rclone"
 date = "2023-07-31"
+updated = "2024-09-26"
+# TODO: This doesn't work with multilingual pages due to the symlink
+# aliases = ["how-i-organize-my-digital-music-collection"]
 +++
 
 I enjoy listening to music and some time ago after cancelling my subscription to
@@ -95,10 +98,133 @@ With this in mind, this is why I went with the cloud provider
 *Scaleway Object Storage* product. It offers a *cold* storage solution for
 long-term archival in the Paris region. This is perfect for my needs.
 
-Backing up my music involves two steps, first with
-[rclone](https://rclone.org/). It is configurable with `rclone config`. The
-configuration is encrypted with a password stored in my password manager. This
-is how the remotes I use are configured in *rclone*:
+### Provisioning the Bucket with Terraform
+
+While I could create the bucket in the *Scaleway Glacier* web UI, I always
+prefer to achieve this through code. *Terraform*, an Infrastructure as
+Code (IaC) tool, is a great fit for this.
+
+Here's how I create a bucket on *Scaleway Glacier* with *Terraform*. Let's first
+write a *Terraform* configuration in `main.tf`. Be sure to replace the
+placeholders and if needed, adapt the zone and region:
+
+- `BUCKET_NAME` ― The bucket name must be globally unique, so across all
+  *Scaleway*'s buckets.
+- `IAM_USER_ID` ― An IAM user which should have access to the bucket if
+  needed, for example via the web UI or the *AWS* CLI with `aws s3`.
+- `IAM_APPLICATION_ID` and `IAM_APPLICATION_NAME` ― The ID and name of an IAM
+  application with limited privileges to sync objects in the bucket via `rclone`.
+
+```terraform
+terraform {
+  required_providers {
+    scaleway = {
+      source = "scaleway/scaleway"
+    }
+  }
+  required_version = ">= 0.13"
+}
+
+# Documentation: https://registry.terraform.io/providers/scaleway/scaleway/latest/docs
+provider "scaleway" {
+  zone   = "fr-par-1"
+  region = "fr-par"
+}
+
+resource "scaleway_object_bucket" "BUCKET_NAME" {
+  name = "BUCKET_NAME"
+}
+
+resource "scaleway_object_bucket_acl" "BUCKET_NAME" {
+  bucket = scaleway_object_bucket.BUCKET_NAME.name
+  acl = "private"
+}
+
+resource "scaleway_object_bucket_policy" "BUCKET_NAME" {
+  bucket = scaleway_object_bucket.BUCKET_NAME.name
+  policy = templatefile("${path.module}/bucket_policy.tftpl", {
+    bucket_name = scaleway_object_bucket.BUCKET_NAME.name,
+    IAM_user_id = IAM_USER_ID,
+    IAM_application_id = IAM_APPLICATION_ID
+    IAM_application_name = IAM_APPLICATION_NAME
+  })
+}
+```
+
+The bucket policy is in a *Terraform* template file (`bucket_policy.tftpl`) as
+the JSON document of a policy can be sometimes quite large, I find this approach
+much easier to reason about than having everything together.
+
+<!-- markdownlint-disable -->
+```terraform
+${jsonencode({
+  "Version": "2023-04-17",
+  "Id": "${bucket_name}-policy",
+  "Statement": [
+    {
+      "Sid": "Allow everything in the bucket ${bucket_name} and its objects for my user",
+      "Effect": "Allow",
+      "Principal": {
+        "SCW": "user_id:${IAM_user_id}"
+      },
+      "Action": "*",
+      "Resource": [
+        "${bucket_name}",
+        "${bucket_name}/*"
+      ]
+    },
+    {
+      "Sid": "Grant access to the bucket ${bucket_name} for the application '${IAM_application_name}'",
+      "Effect": "Allow",
+      "Principal": {
+        "SCW": "application_id:${IAM_application_id}"
+      },
+      "Action": "s3:ListBucket",
+      "Resource": "${bucket_name}"
+    },
+    {
+      "Sid": "Allow reads and writes of objects in the bucket ${bucket_name} for the application '${IAM_application_name}'",
+      "Effect": "Allow",
+      "Principal": {
+        "SCW": "application_id:${IAM_application_id}"
+      },
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "${bucket_name}",
+        "${bucket_name}/*"
+      ]
+    }
+  ]
+})}
+```
+<!-- markdownlint-enable -->
+
+For *Terraform* to provision the bucket, it must first authenticate to
+*Scaleway*, so I have to create an API key for an IAM user or application. I
+store the *Access Key Id* and *Secret Key* of this API key in my password
+manager (*1Password*) and rely on environment variables to avoid storing secrets
+on disk. With the help of [direnv](https://direnv.net/), environment variables
+are automatically exported/unexported whenever I enter/leave the directory
+containing this `.envrc` file:
+
+```bash
+export SCW_ACCESS_KEY="$(op read 'op://reference/to/Access Key Id')"
+export SCW_SECRET_KEY="$(op read 'op://reference/to/Secret Access Key')"
+```
+
+And now with `terraform init`, followed by `terraform plan`, I ensure that the
+bucket would be provisioned as I expect it to. Afterwards, I apply the execution
+plan with `terraform apply`.
+
+### Uploading Objects to the Bucket With rclone
+
+Backing up my music on the bucket I created above with *Terraform* involves two
+steps. First with [rclone](https://rclone.org/). It is configurable with `rclone
+config`. The configuration is encrypted with a password stored in my password
+manager. This is how the remotes I use are configured in *rclone*:
 
 ```text
 [homeserver]
