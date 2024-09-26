@@ -69,7 +69,8 @@
         <script src={{ get_url(path="js/codeblock.js") }}></script>
     {% endif %}
 
-    {# RSS #}
+    {# RSS & Atom #}
+    <link rel="alternate" type="application/rss+xml" title="{{ config.title }}" href="{{ get_url(path="rss.xml", trailing_slash=false) }}">
     <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path="atom.xml", trailing_slash=false) }}">
 
     <link rel="stylesheet" type="text/css" media="screen" href={{ get_url(path="main.css") }} />

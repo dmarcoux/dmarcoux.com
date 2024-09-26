@@ -85,15 +85,21 @@ header .socials {
 }
 
 .social {
-    border-bottom: unset;
+    border-bottom: 3px solid transparent;
     background-image: unset;
-    padding: 2px;
+    margin-top: 2px;
+}
+
+a.social:hover {
+    border-bottom: 3px solid var(--primary-color);
+    background-color: unset;
 }
 
 .social>img {
     border: unset;
     width: 24px;
     height: 24px;
+    padding: 0 2px;
 }
 
 /* Mobile-specific adjustments */

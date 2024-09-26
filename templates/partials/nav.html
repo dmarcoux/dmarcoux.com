@@ -5,9 +5,15 @@
         <div class="socials">
             {% for social in config.extra.socials | default(value=[]) %}
             <a rel="me" href="{{ social.url }}" class="social">
-                <img alt="{{ social.name }} icon" src={{ get_url(path="social_icons/" ~ social.icon ~ ".svg") }}>
+                <img alt="{{ social.name }} icon" src={{ get_url(path="icons/" ~ social.icon ~ ".svg") }}>
             </a>
             {% endfor %}
+            <a rel="alternate" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" class="social">
+                <img alt="Atom feed icon" src={{ get_url(path="icons/atom.svg") }}>
+            </a>
+            <a rel="alternate" href="{{ get_url(path="rss.xml", trailing_slash=false) }}" class="social">
+                <img alt="RSS feed icon" src={{ get_url(path="icons/rss.svg") }}>
+            </a>
         </div>
     </div>
 

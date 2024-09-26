@@ -20,6 +20,10 @@ default_language = "en"
 # The default author for pages
 author = "Dany Marcoux"
 
+# Generate RSS and Atom feeds
+generate_feeds = true
+feed_filenames = ["rss.xml", "atom.xml"]
+
 [markdown]
 # Whether to do syntax highlighting
 # https://www.getzola.org/documentation/content/syntax-highlighting/
