@@ -25,13 +25,6 @@
         {% endfor %}
     {% endif %}
 
-    {# Site title #}
-    <title>
-        {{ config.title }}
-        {% if page.title %} - {{ page.title }}
-        {% elif section.title %} - {{ section.title }}
-        {% endif %}
-    </title>
     {% if not page_has_og_title %}
     <meta property="og:title" content="{{ config.title }}{% if page.title -%} - {{ page.title }}{% endif -%}" />
     {% endif %}
@@ -51,6 +44,14 @@
              <meta name="description" content="{{ config.description }}" />
          {% endif %}
     {% endif %}
+
+    {# Site title #}
+    <title>
+        {{ config.title }}
+        {% if page.title %} - {{ page.title }}
+        {% elif section.title %} - {{ section.title }}
+        {% endif %}
+    </title>
 
     {# Favicon #}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ get_url(path="favicon/apple-touch-icon.png") }}">
