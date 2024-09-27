@@ -53,18 +53,39 @@ to the default site name provided by Cloudflare Pages.
 
 ### Settings
 
+Since Cloudflare Pages only support a single build configuration for all
+environments (preview and production), I need to use a few tricks in order to
+have the right base URL depending on the environment. Credits goes to this
+[comment](https://github.com/NathanVaughn/blog.nathanv.me/discussions/210#discussioncomment-9629836).
+
+As for the development environment, it isn't affected since `zola serve` already
+overwrites the base URL to `localhost`.
+
+And now in the preview environment, the environment variable `CF_PAGES_URL` is
+set to the URL of the preview deployment, so this can be passed to the `zola
+build` command with the `--base-url` flag. In production, we set the environment
+variable `CF_PAGES_URL` to `https://dmarcoux.com`. This way, I can use the same
+build command for both environments and I have the right base URL in all
+environments.
+
 #### Build Configurations
 
-- Build command: `zola build`
+- Build command: `zola build --base-url $CF_PAGES_URL`
 - Build output directory: `/public`
 - Root directory: `/`
 - Build comments on pull requests: `Enabled`
 
 #### Environment Variables
 
-The following environment variables are set for both `production` and `preview`.
+The following environment variables are set.
+
+_Production & Preview_:
 
 - `ZOLA_VERSION` with the value `0.19.2`
+
+_Production_:
+
+- `CF_PAGES_URL` with the value `https://dmarcoux.com`
 
 ## Credits
 
