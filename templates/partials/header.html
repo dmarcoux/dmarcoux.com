@@ -65,10 +65,8 @@
         <link href={{ get_url(path="fonts.css") }} rel="stylesheet" />
     {% endif %}
 
-    {# Fancy Codeblock #}
-    {% if config.extra.fancy_code %}
-        <script src={{ get_url(path="js/codeblock.js") }}></script>
-    {% endif %}
+    {# Fancy Codeblock - Add the language label and a copy button to code blocks #}
+    <script src={{ get_url(path="js/codeblock.js") }}></script>
 
     {# RSS & Atom #}
     <link rel="alternate" type="application/rss+xml" title="{{ config.title }}" href="{{ get_url(path="rss.xml", trailing_slash=false) }}">
