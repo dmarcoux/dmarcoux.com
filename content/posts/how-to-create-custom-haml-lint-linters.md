@@ -1,6 +1,15 @@
 +++
 title = "How to Create Custom haml_lint Linters"
+description = """\
+                haml_lint provides a lot of useful linters, but you might have rules specific \
+                to your Rails application. In this case, you'll have to create a custom linter \
+                to enforce those rules.\
+              """
 date = "2021-09-27"
+
+[extra.meta]
+type = "article"
+keywords = "haml_lint, custom linters, lint, Haml, Ruby on Rails, Ruby, Rails"
 +++
 
 The majority of software engineering teams have rules, guidelines or standards

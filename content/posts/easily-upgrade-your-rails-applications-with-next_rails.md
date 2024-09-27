@@ -1,6 +1,15 @@
 +++
 title = "Easily Upgrade Your Rails Applications With next_rails"
+description = """\
+                With next_rails, a toolkit to upgrade Rails applications, turn your \
+                wish into reality. next_rails makes the whole upgrade process easier \
+                to manage by allowing you to gradually change your code.\
+              """
 date = "2021-08-13"
+
+[extra.meta]
+type = "article"
+keywords = "Ruby on Rails, Ruby, Rails, next_rails, Update, Upgrade, Toolkit, Dual Boot"
 +++
 
 Did you ever wish you could upgrade your *Rails* applications without doing it

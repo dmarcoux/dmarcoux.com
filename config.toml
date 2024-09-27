@@ -3,7 +3,10 @@ base_url = "https://dmarcoux.com" # This isn't actually used, since `zola serve`
 
 # The site title and description; used in feeds by default.
 title = "Dany Marcoux"
-description = "Software and DevOps Engineer"
+description = """\
+                Software and DevOps engineer with 12+ years of experience. \
+                I write about DevOps, web development, Linux, Ruby, and more.\
+              """
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -32,7 +35,10 @@ highlight_theme = "dracula"
 
 [languages.de]
 title = "Dany Marcoux"
-description = "Software und DevOps Engineer"
+description = """\
+                Software und DevOps Engineer mit 12+ Jahren Erfahrung. \
+                Ich schreibe über DevOps, Webentwicklung, Linux, Ruby, und mehr.\
+              """
 
 [extra]
 menu = [

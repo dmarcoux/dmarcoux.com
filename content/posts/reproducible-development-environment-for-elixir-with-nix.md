@@ -1,6 +1,15 @@
 +++
 title = "Reproducible Development Environment for Elixir with Nix"
+description = """\
+                Did someone ever tell you "But it works on my computer!", \
+                while it doesn't on yours? Rely on Nix for your development \
+                environments to avoid this altogether!\
+              """
 date = "2022-11-09"
+
+[extra.meta]
+type = "article"
+keywords = "Nix, Elixir, development environment, reproducible, nix-shell, NixOS"
 +++
 
 Recently, I started learning about *Elixir* and at first, I was somewhat unsure
