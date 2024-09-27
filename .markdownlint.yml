@@ -4,4 +4,5 @@ default: true
 # Trailing punctuation in headings
 MD026:
   # The following punctuation characters aren't accepted in headings
+  # This differs from the default configuration by accepting exclamation marks in headings
   punctuation: ".,;:。，；："
