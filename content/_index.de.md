@@ -1,4 +1,4 @@
 +++
-title = "Software / DevOps Engineer"
+title = "Software und DevOps Engineer"
 template ="index.de.html"
 +++
