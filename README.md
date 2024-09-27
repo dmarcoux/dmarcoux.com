@@ -61,11 +61,11 @@ have the right base URL depending on the environment. Credits goes to this
 As for the development environment, it isn't affected since `zola serve` already
 overwrites the base URL to `localhost`.
 
-And now in the preview environment, the environment variable `CF_PAGES_URL` is
-set to the URL of the preview deployment, so this can be passed to the `zola
-build` command with the `--base-url` flag. In production, we set the environment
+In the preview environment, the environment variable `CF_PAGES_URL` is set to
+the URL of the preview deployment, so this can be passed to the `zola build`
+command with the `--base-url` flag. In production, we set the environment
 variable `CF_PAGES_URL` to `https://dmarcoux.com`. This way, I can use the same
-build command for both environments and I have the right base URL in all
+build command for both environments and have the right base URL in all
 environments.
 
 #### Build Configurations
