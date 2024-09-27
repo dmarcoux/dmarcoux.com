@@ -35,9 +35,6 @@ title = "Dany Marcoux"
 description = "Software/DevOps Engineer"
 
 [extra]
-# TODO
-# favicon = "/icon/favicon.png"
-
 # Add the language label and a copy button to code blocks
 fancy_code = true
 

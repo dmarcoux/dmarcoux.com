@@ -53,9 +53,10 @@
     {% endif %}
 
     {# Favicon #}
-    {% if config.extra.favicon %}
-        <link rel="icon" type="image/png" href={{ config.extra.favicon }} />
-    {% endif %}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ get_url(path="favicon/apple-touch-icon.png") }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path="favicon/favicon-32x32.png") }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path="favicon/favicon-16x16.png") }}">
+    <link rel="manifest" href="{{ get_url(path="favicon/site.webmanifest") }}">
 
     {# Font from cdn or disk #}
     {% if config.extra.use_cdn | default(value=false) %}
