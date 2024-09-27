@@ -3,7 +3,7 @@ base_url = "https://dmarcoux.com" # This isn't actually used, since `zola serve`
 
 # The site title and description; used in feeds by default.
 title = "Dany Marcoux"
-description = "Software/DevOps Engineer"
+description = "Software and DevOps Engineer"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -32,7 +32,7 @@ highlight_theme = "dracula"
 
 [languages.de]
 title = "Dany Marcoux"
-description = "Software/DevOps Engineer"
+description = "Software und DevOps Engineer"
 
 [extra]
 # Add the language label and a copy button to code blocks
