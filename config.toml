@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "/" # For Zola to use relative paths instead of absolute paths for assets
+base_url = "https://dmarcoux.com" # This isn't actually used, since `zola serve` overwrites it development, and I call `zola build --base-url ...` in preview/production environments
 
 # The site title and description; used in feeds by default.
 title = "Dany Marcoux"
