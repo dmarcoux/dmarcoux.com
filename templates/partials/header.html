@@ -80,4 +80,10 @@
             <link rel="stylesheet" href="{{ get_url(path=stylesheet) }}">
         {% endfor %}
     {% endif %}
+
+    {# SEO #}
+    {# current_url isn't defined on the 404 page, so this is why `if current_url` is needed #}
+    {% if current_url %}
+        <link rel="canonical" href="{{ current_url | safe }}" />
+    {% endif %}
 </head>
