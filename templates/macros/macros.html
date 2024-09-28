@@ -85,12 +85,8 @@
     {% endif -%}
 {% endmacro tags %}
 
-{% macro page_header(title, mimick_shell=true) %}
+{% macro page_header(title) %}
     <div class="page-header">
-        {%- if mimick_shell %}
-        <h1 class="with-cursor"><span style="margin-right: 5px;">[dany@~]$ </span><span>{{ title }}</span></h1>
-        {% else %}
-            <h1>{{ title }}</h1>
-        {% endif -%}
+        <h1>{{ title }}</h1>
     </div>
 {% endmacro page_header %}

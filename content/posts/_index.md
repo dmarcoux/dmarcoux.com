@@ -5,7 +5,4 @@ sort_by = "date"
 template = "posts.html"
 
 insert_anchor_links = "heading"
-
-[extra]
-command = "ls Posts"
 +++
