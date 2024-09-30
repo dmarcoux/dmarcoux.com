@@ -36,7 +36,7 @@ mkShell {
     command -v markdownlint-cli2 1> /dev/null || npm install markdownlint-cli2@0.5.1 --global
 
     # Create alias to lint Markdown files
-    alias lint="markdownlint-cli2 '**/*.md' '#themes' '#node_modules' '#$NPM_CONFIG_PREFIX'"
+    alias lint="markdownlint-cli2 '**/*.md' '#node_modules' '#$NPM_CONFIG_PREFIX'"
 
     # For the bundle of SSL certificates to be used in applications (like curl and others...)
     export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
