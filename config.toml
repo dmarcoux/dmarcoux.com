@@ -42,8 +42,8 @@ description = """\
 
 [extra]
 menu = [
-    { name = "/posts", url = "posts", weight = 1 },
-    # TODO: { name = "/whoami", url = "whoami", weight = 2 },
+    { name = "Posts", url = "posts", weight = 1 },
+    # TODO: { name = "About", url = "about", weight = 2 },
 ]
 
 socials = [
