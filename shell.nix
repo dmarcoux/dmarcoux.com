@@ -31,9 +31,9 @@ mkShell {
     #
     # To update this linter:
     # - Remove the installed NPM packages with `rm -r $NPM_CONFIG_PREFIX`
-    # - Update the pinned version
+    # - Update the pinned version here and in GitHub Actions workflow
     # - Restart this nix-shell
-    command -v markdownlint-cli2 1> /dev/null || npm install markdownlint-cli2@0.5.1 --global
+    command -v markdownlint-cli2 1> /dev/null || npm install markdownlint-cli2@0.14.0 --global
 
     # Create alias to lint Markdown files
     alias lint="markdownlint-cli2 '**/*.md' '#node_modules' '#$NPM_CONFIG_PREFIX'"
