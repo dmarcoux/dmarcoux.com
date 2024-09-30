@@ -24,4 +24,6 @@ jobs:
         run: npm install markdownlint-cli2 --global
       - name: Lint Markdown files, while excluding anything under the themes and node_modules directories
         run: markdownlint-cli2 "**/*.md" "#themes" "#node_modules"
-      # TODO: Add a step for `zola check`
+      # TODO: zola must be installed for this to work
+      # - name: Check if the project builds and for broken links
+      #   run: zola check
