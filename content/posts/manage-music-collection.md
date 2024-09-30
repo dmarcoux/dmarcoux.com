@@ -1,18 +1,29 @@
 +++
-title = "Manage a Music Collection on Linux with whipper, beets, Terraform and rclone"
+title = "Manage a Music Collection with whipper, beets, Terraform and rclone"
+description = """\
+                I enjoy listening to music and after cancelling my subscription \
+                to a music streaming service, I decided to go back to owning music \
+                again. This is how I organize my digital music collection.\
+              """
 date = "2023-07-31"
 updated = "2024-09-27"
+
+[extra.meta]
+type = "article"
+keywords = "music, music collection, Linux, whipper, beets, Terraform, rclone, Scaleway, FolderSync"
+
 # TODO: This doesn't work with multilingual pages due to the symlink
 # aliases = ["how-i-organize-my-digital-music-collection"]
 +++
 
 I enjoy listening to music and some time ago after cancelling my subscription to
-a music streaming service, I decided to go back to owning music again. I
-wanted to listen to my music across multiple devices, so I streamlined my setup
-until I was satisfied with it. This is how I organize my digital music
-collection on a Linux-based workflow. Details on some concepts might be left
-out, since this blog post is more of a notebook for myself to get this out of my
-head. Anyway, perhaps it can still help out someone.
+a music streaming service, I decided to go back to owning music again. I wanted
+to listen to my music across multiple devices, so I streamlined my setup until I
+was satisfied with it. This is how I organize my digital music collection on a
+Linux-based workflow, but the tools are available on Windows and Mac OS. Details
+on some concepts might be left out, since this blog post is more of a notebook
+for myself to get this out of my head. Anyway, perhaps it can still help out
+someone.
 
 ## Ripping CDs With whipper
 

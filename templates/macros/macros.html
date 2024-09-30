@@ -30,22 +30,6 @@
                     <span class="draft-label">DRAFT</span>
                     {% endif %}
                 </h2>
-
-                <div class="meta">
-                    <div class="description">
-                        {% if page.description %}
-                        {{ page.description }}
-                        {% elif page.summary %}
-                        {{ page.summary | safe }}&hellip;
-                        {% else %}
-                        {% set hide_read_more = true %}
-                        {% endif %}
-                    </div>
-
-                    {% if not hide_read_more %}
-                    <a class="readmore" href={{ page.permalink }}>Read more ⟶</a>
-                    {% endif %}
-                </div>
             </div>
         </div>
     </section>

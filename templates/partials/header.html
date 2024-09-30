@@ -1,56 +1,64 @@
 {% import "macros/macros.html" as post_macros %}
 
-<head>
+<head prefix="og: http://ogp.me/ns#">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {% if page.extra.meta %}
-         <!-- the meta data config goes here  -->
-         {% for data in page.extra.meta %}
-             <meta
-                 {% for key, value in data%}
-                     {% if key == "property" and value == "og:title"%}
-                         {% set_global page_has_og_title = true -%}
-                     {% endif %}
-                     {% if key == "property" and value == "og:description"%}
-                         {% set_global page_has_og_description = true -%}
-                     {% endif %}
-                     {% if key == "name" and value == "description"%}
-                         {% set_global page_has_description = true -%}
-                     {% endif %}
-                     {{ key }}="{{ value }}"
-                {% endfor %}
-            />
-        {% endfor %}
+    {# SEO, Open Graph meta tags #}
+
+    {# current_url isn't defined on the 404 page, so this is why `if current_url` is needed #}
+    {% if current_url %}
+        <link rel="canonical" href="{{ current_url | safe }}" />
+        <meta property="og:url" content="{{ current_url | safe }}" />
     {% endif %}
+
+    {% if page.title %}
+        {% set og_title = page.title %}
+    {% elif section.title %}
+        {% set og_title = section.title %}
+    {% else %}
+        {% set og_title = config.title %}
+    {% endif %}
+
+    {% set og_title_length = og_title | length %}
+    {# The title must be at most 70 characters, more is not recommended. This is enforced below. #}
+    {% if og_title_length > 70 %}
+    {{ throw(message="og:title is longer than 70 characters (" ~ og_title_length ~ "): " ~ og_title) }}
+    {% endif %}
+
+    <meta property="og:title" content="{{ og_title }}" />
+    <meta property="og:type" content="{{ page.extra.meta.type | default(value="website") }}" />
+    <meta property="og:image" content="{{ get_url(path="images/og_image.png") }}" />
+    <meta property="og:locale" content="{{ lang | default(value="en") }}" />
+
+    {% set description = page.description | default(value=config.description) %}
+    {% set description_length = description | length %}
+    {# The description must be at most 200 characters, more is not recommended. This is enforced below. #}
+    {% if description_length > 200 %}
+        {{ throw(message="Description is longer than 200 characters (" ~ description_length ~ "): " ~ description ) }}
+    {% endif %}
+    <meta property="og:description" content="{{ description }}" />
+    <meta name="description" content="{{ description }}" />
+
+    {% set keywords = page.extra.meta.keywords | default(value="DevOps Engineer, Software Engineer, DevOps, Web Development, Linux, Docker, Ruby") %}
+    {% set number_of_keywords = keywords | split(pat=",") | length %}
+    {# Having 10 keywords is optimal, and more is definitely not good. This is enforced below. #}
+    {% if number_of_keywords > 10 %}
+        {{ throw(message="More than 10 keywords (" ~ number_of_keywords ~ "): " ~ keywords) }}
+    {% endif %}
+    <meta name="keywords" content="{{keywords}}" />
 
     {# Site title #}
     <title>
-        {{ config.title }}
-        {% if page.title %} - {{ page.title }}
-        {% elif section.title %} - {{ section.title }}
+        {% if page.title %}
+            {{ config.title ~ " | " ~ page.title }}
+        {% elif section.title %}
+            {{ config.title ~ " | " ~ section.title }}
+        {% else %}
+            {{ config.title }}
         {% endif %}
     </title>
-    {% if not page_has_og_title %}
-    <meta property="og:title" content="{{ config.title }}{% if page.title -%} - {{ page.title }}{% endif -%}" />
-    {% endif %}
-
-     {% if not page_has_og_description %}
-         {% if page.description %}
-             <meta property="og:description" content="{{ page.description }}" />
-         {% elif config.description %}
-             <meta property="og:description" content="{{ config.description }}" />
-         {% endif %}
-     {% endif %}
-
-     {% if not page_has_description %}
-         {% if page.description %}
-             <meta name="description" content="{{ page.description }}" />
-         {% elif config.description %}
-             <meta name="description" content="{{ config.description }}" />
-         {% endif %}
-    {% endif %}
 
     {# Favicon #}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ get_url(path="favicon/apple-touch-icon.png") }}">
@@ -78,11 +86,5 @@
         {% for stylesheet in config.extra.stylesheets %}
             <link rel="stylesheet" href="{{ get_url(path=stylesheet) }}">
         {% endfor %}
-    {% endif %}
-
-    {# SEO #}
-    {# current_url isn't defined on the 404 page, so this is why `if current_url` is needed #}
-    {% if current_url %}
-        <link rel="canonical" href="{{ current_url | safe }}" />
     {% endif %}
 </head>
