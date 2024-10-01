@@ -6,3 +6,10 @@ MD026:
   # The following punctuation characters aren't accepted in headings
   # This differs from the default configuration by accepting exclamation marks in headings
   punctuation: ".,;:。，；："
+
+# Inline HTML
+MD033:
+  # Allow specific HTML elements to be present in Markdown files
+  # small - I like to use this for notes or a writing style
+  allowed_elements: ["small"]
+
