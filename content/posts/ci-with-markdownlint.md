@@ -1,7 +1,8 @@
 +++
 title = "Lint Markdown files with markdownlint in GitHub Actions"
 description = """\
-
+                Gone are the chaotic days of incongruous Markdown files. \
+                Enforce a consistent style with markdownlint.\
               """
 date = "2024-10-01"
 
