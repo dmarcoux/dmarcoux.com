@@ -30,7 +30,7 @@
     <meta property="og:title" content="{{ og_title }}" />
     <meta property="og:type" content="{{ page.extra.meta.type | default(value="website") }}" />
     <meta property="og:image" content="{{ get_url(path="images/og_image.png") }}" />
-    <meta property="og:locale" content="{{ lang | default(value="en") }}" />
+    <meta property="og:locale" content="en" />
 
     {% set description = page.description | default(value=config.description) %}
     {% set description_length = description | length %}

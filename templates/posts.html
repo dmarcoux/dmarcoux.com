@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 
 {% block main_content %}
-    {% if lang != "en" %}
-        <div class="note-container">
-            <div class="note-content">
-                <p>Die Blogeinträge sind momentan nur auf Englisch verfügbar.</p>
-            </div>
-        </div>
-    {% endif %}
-
     {% if section.extra.section_path -%}
         {% set section = get_section(path=section.extra.section_path) %}
     {% endif -%}

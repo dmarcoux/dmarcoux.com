@@ -1,1 +1,0 @@
-reproducible-development-environment-for-elixir-with-nix.md
