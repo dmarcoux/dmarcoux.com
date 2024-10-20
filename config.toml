@@ -33,13 +33,6 @@ feed_filenames = ["rss.xml", "atom.xml"]
 highlight_code = true
 highlight_theme = "dracula"
 
-[languages.de]
-title = "Dany Marcoux"
-description = """\
-                Software und DevOps Engineer mit 12+ Jahren Erfahrung. \
-                Ich schreibe über DevOps, Webentwicklung, Linux, Ruby, und mehr.\
-              """
-
 [extra]
 menu = [
     { name = "Posts", url = "posts", weight = 1 },

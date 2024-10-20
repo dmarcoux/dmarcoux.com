@@ -1,6 +1,6 @@
 <header>
     <div class="main">
-        <a href={{ get_url(path="@/_index.md", lang=lang) }}>{{ config.title }}</a>
+        <a href={{ get_url(path="@/_index.md") }}>{{ config.title }}</a>
 
         <div class="socials">
             {% for social in config.extra.socials | default(value=[]) %}
@@ -19,18 +19,7 @@
 
     <nav>
         {% for menu in config.extra.menu | default(value=[]) %}
-        <a href={{ get_url(path=menu.url, lang=lang) }} style="margin-left: 0.5em">{{ menu.name }}</a>
+        <a href={{ get_url(path=menu.url) }} style="margin-left: 0.5em">{{ menu.name }}</a>
         {% endfor %}
-
-        {# current_path is not defined on all templates, like the feeds, sitemap and 404 pages #}
-        {% if current_path is not defined or current_path is not starting_with("posts/") %}
-            {% if lang == "en" %}
-                <span style="margin-left:1em;background-color:var(--primary-color);color:white">EN</span>
-                <a href="{{ get_url(path="@/_index.md", lang="de") }}" style="margin-left: 0.5em">DE</a>
-            {% else %}
-                <a href="{{ get_url(path="@/_index.md", lang="en") }}" style="margin-left: 1em">EN</a>
-                <span style="margin-left:0.5em;background-color:var(--primary-color);color:white">DE</span>
-            {% endif %}
-        {% endif %}
     </nav>
 </header>
