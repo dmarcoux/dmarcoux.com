@@ -7,4 +7,3 @@ ZOLA_VERSION = "0.19.2"
 
 [env.production.vars]
 CF_PAGES_URL = "https://dmarcoux.com"
-ZOLA_VERSION = "0.19.2"
