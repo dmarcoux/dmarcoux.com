@@ -1,6 +1,6 @@
 # To ensure this nix-shell is reproducible, we pin the packages index to a commit SHA taken from a channel on https://status.nixos.org/
-# This commit is from nixos-unstable, somewhere between NixOS 24.05 and the next version
-with (import (fetchTarball https://github.com/NixOS/nixpkgs/archive/12228ff1752d7b7624a54e9c1af4b222b3c1073b.tar.gz) {});
+# This commit is from nixos-unstable, somewhere between NixOS 25.05 and the next version
+with (import (fetchTarball https://github.com/NixOS/nixpkgs/archive/a8d610af3f1a5fb71e23e08434d8d61a466fc942.tar.gz) {});
 
 mkShell {
   buildInputs = [
@@ -41,9 +41,8 @@ mkShell {
     # For the bundle of SSL certificates to be used in applications (like curl and others...)
     export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
 
-    # TODO: This would be nice once configuration by file is available for Cloudflare Pages.
-    # Ensure `ZOLA_VERSION` in `netlify.toml` matches the installed version of Zola. This is a safeguard, since it's too easy to forget doing this...
-    # zola --version | sed -e "s|zola \(.*\)|\1|g" | xargs -I % sh -c "sed --in-place -e 's|ZOLA_VERSION = .*|ZOLA_VERSION = \"%\"|g' netlify.toml"
+    # Ensure `ZOLA_VERSION` in `wrangler.toml` matches the installed version of Zola. This is a safeguard, since it's too easy to forget doing this...
+    zola --version | sed -e "s|zola \(.*\)|\1|g" | xargs -I % sh -c "sed --in-place -e 's|ZOLA_VERSION = .*|ZOLA_VERSION = \"%\"|g' wrangler.toml"
   '';
 
   # Without this, there are warnings about LANG, LC_ALL and locales.
