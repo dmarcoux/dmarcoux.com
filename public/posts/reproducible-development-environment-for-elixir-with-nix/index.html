@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+
+    
+    
+        <link rel="canonical" href="https://dmarcoux.com/posts/reproducible-development-environment-for-elixir-with-nix/" />
+        <meta property="og:url" content="https://dmarcoux.com/posts/reproducible-development-environment-for-elixir-with-nix/" />
+    
+
+    
+        
+    
+
+    
+    
+    
+
+    <meta property="og:title" content="Reproducible Development Environment for Elixir with Nix" />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://dmarcoux.com/images/og_image.png" />
+    <meta property="og:locale" content="en" />
+
+    
+    
+    
+    
+
+    
+    
+    <meta property="og:description" content="Did someone ever tell you &quot;But it works on my computer!&quot;, while it doesn&#x27;t on yours? Rely on Nix for your development environments to avoid this altogether!" />
+    <meta name="description" content="Did someone ever tell you &quot;But it works on my computer!&quot;, while it doesn&#x27;t on yours? Rely on Nix for your development environments to avoid this altogether!" />
+
+    
+    
+    
+    
+    <meta name="keywords" content="Nix, Elixir, development environment, reproducible, nix-shell, NixOS" />
+
+    
+    <title>
+        
+            Dany Marcoux | Reproducible Development Environment for Elixir with Nix
+        
+    </title>
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="https://dmarcoux.com/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://dmarcoux.com/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://dmarcoux.com/favicon/favicon-16x16.png">
+    <link rel="manifest" href="https://dmarcoux.com/favicon/site.webmanifest">
+
+    
+    
+        <link href=https://dmarcoux.com/fonts.css rel="stylesheet" />
+    
+
+    
+    <script src=https://dmarcoux.com/js/codeblock.js></script>
+
+    
+    <link rel="alternate" type="application/rss+xml" title="Dany Marcoux" href="https://dmarcoux.com/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="Dany Marcoux" href="https://dmarcoux.com/atom.xml">
+
+    <link rel="stylesheet" type="text/css" media="screen" href=https://dmarcoux.com/main.css />
+
+    
+</head>
+
+
+<body>
+    <div class="content">
+        <header>
+    <div class="main">
+        <a href=https://dmarcoux.com/>Dany Marcoux</a>
+
+        <div class="socials">
+            
+            <a rel="me" href="https:&#x2F;&#x2F;github.com&#x2F;dmarcoux&#x2F;" class="social">
+                <img alt="GitHub icon" src=https://dmarcoux.com/icons/github.svg>
+            </a>
+            
+            <a rel="me" href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;danymarcoux&#x2F;" class="social">
+                <img alt="LinkedIn icon" src=https://dmarcoux.com/icons/linkedin.svg>
+            </a>
+            
+            <a rel="alternate" href="https://dmarcoux.com/atom.xml" class="social">
+                <img alt="Atom feed icon" src=https://dmarcoux.com/icons/atom.svg>
+            </a>
+            <a rel="alternate" href="https://dmarcoux.com/rss.xml" class="social">
+                <img alt="RSS feed icon" src=https://dmarcoux.com/icons/rss.svg>
+            </a>
+        </div>
+    </div>
+
+    <nav>
+        
+        <a href=https://dmarcoux.com/posts style="margin-left: 0.5em">Posts</a>
+        
+    </nav>
+</header>
+
+
+        
+        
+<main>
+    <article>
+        <div class="title">
+            
+    <div class="page-header">
+        <h1>Reproducible Development Environment for Elixir with Nix</h1>
+    </div>
+
+
+                <div class="meta">
+                    
+                        Posted on <time>09&#x2F;Nov&#x2F;2022</time>
+                    
+
+                    
+
+                    
+
+                    
+                    
+
+                    
+
+                </div>
+        </div>
+
+        
+
+        <section class="body">
+            <p>Recently, I started learning about <em>Elixir</em> and at first, I was somewhat unsure
+about how to setup my development environment. After reading the various
+recommendations from the <em>Elixir</em> community, my questions remained. This is when
+I asked on <em>Twitter</em> to gather more thoughts on the matter. It led me to
+research further how I could setup a reproducible development environment for
+Elixir. I will share with you how I achieved this with <em>Nix</em>.</p>
+<h2 id="what-is-nix"><a class="zola-anchor" href="#what-is-nix" aria-label="Anchor link for: what-is-nix">What Is <em>Nix</em>?</a></h2>
+<p>Did a colleague or a friend ever tell you <em>"But it works on my computer!"</em> ?
+No...? Well consider yourself lucky then! For the unlucky ones, you know how
+this sucks... you simply want to run some application on your computer and it
+doesn't work. It's perhaps a missing undocumented dependency or some dependency
+version mismatch.</p>
+<p>You don't have to go through this. Do not rely on system packages, this is
+asking for trouble. Leave your runtime versions manager like <em>asdf</em> behind. They
+aren't much better. Those approaches aren't reliable and reproducible. This is
+where <em>Nix</em> comes in. It's a purely functional and cross-platform package manager.
+It can be <a href="https://nixos.org/download.html">installed</a> in various ways, this
+will depend on your operating system.</p>
+<p>Once you have <em>Nix</em> on your computer, you can create reproducible development
+environment with <em>nix-shell</em>.</p>
+<h2 id="the-nix-shell-command"><a class="zola-anchor" href="#the-nix-shell-command" aria-label="Anchor link for: the-nix-shell-command">The <em>nix-shell</em> Command</a></h2>
+<p>One of the commands provided by <em>Nix</em> is <code>nix-shell</code>.</p>
+<p>Whenever executing <code>nix-shell --pure</code> in your terminal, the command looks for
+the file <em>shell.nix</em> in the current working directory. This file contains <em>Nix</em>
+code to create a shell or if you prefer, your development environment. As for
+the <code>--pure</code> flag, it ensures your system configuration and its packages do not
+interfere with the shell you created just now. Everything else stays the same in
+this shell, you can freely navigate your filesystem, run a <em>Phoenix</em> application
+or start <em>IEx</em>, the world is yours!</p>
+<h2 id="show-me-the-money"><a class="zola-anchor" href="#show-me-the-money" aria-label="Anchor link for: show-me-the-money">Show Me the Money</a></h2>
+<p>Let's have a look at a real-world <em>shell.nix</em> example. The comments will walk
+you through what happens. You can horizontally scroll in the code block below if
+it's not fully visible on your device.</p>
+<!-- markdownlint-disable -->
+<pre data-lang="nix" style="background-color:#282a36;color:#f8f8f2;" class="language-nix "><code class="language-nix" data-lang="nix"><span style="color:#6272a4;"># To ensure this nix-shell is reproducible, we pin the packages index
+</span><span style="color:#6272a4;"># to a commit SHA taken from a channel on https://status.nixos.org/.
+</span><span style="color:#6272a4;"># This commit is from the nixos-22.05 channel, the current stable channel.
+</span><span style="color:#ff79c6;">with </span><span>(</span><span style="color:#8be9fd;">import </span><span>(</span><span style="font-style:italic;color:#ffb86c;">fetchTarball </span><span style="color:#f1fa8c;">https://github.com/NixOS/nixpkgs/archive/8de8b98839d1.tar.gz</span><span>) {});
+</span><span>
+</span><span style="color:#ff79c6;">let
+</span><span>  </span><span style="color:#6272a4;"># Set the version of Erlang/OTP you want to use, this is Erlang/OTP 25.
+</span><span>  </span><span style="color:#6272a4;"># `erlang` is a variable referring to a Nix package
+</span><span>  </span><span style="color:#50fa7b;">erlang </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">beam</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">packages</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">erlangR25</span><span>;
+</span><span style="color:#ff79c6;">in
+</span><span>  </span><span style="font-style:italic;color:#ffb86c;">mkShell </span><span>{
+</span><span>    </span><span style="color:#6272a4;"># Install Nix packages you want to use in your development environment
+</span><span>    </span><span style="color:#50fa7b;">buildInputs </span><span style="color:#ff79c6;">= </span><span>[
+</span><span>      </span><span style="color:#6272a4;"># Elixir with Erlang/OTP specified in the `erlang` variable defined above.
+</span><span>      </span><span style="color:#6272a4;"># Relying on the package `elixir` alone isn&#39;t enough, as the version
+</span><span>      </span><span style="color:#6272a4;"># of Erlang cannot be specified.
+</span><span>      </span><span style="font-style:italic;color:#ffb86c;">erlang</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">elixir_1_14
+</span><span>      </span><span style="color:#6272a4;"># The package manager for Erlang
+</span><span>      </span><span style="font-style:italic;color:#ffb86c;">erlang</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">hex
+</span><span>      </span><span style="color:#6272a4;"># The build tool for Erlang.
+</span><span>      </span><span style="color:#6272a4;"># If changing this package, do not forget to replicate the change
+</span><span>      </span><span style="color:#6272a4;"># below in `shellHook`.
+</span><span>      </span><span style="font-style:italic;color:#ffb86c;">erlang</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">rebar3
+</span><span>      </span><span style="color:#6272a4;"># For the Live Reloading feature in Phoenix
+</span><span>      </span><span style="font-style:italic;color:#ffb86c;">inotify-tools
+</span><span>      </span><span style="color:#6272a4;"># Locales
+</span><span>      </span><span style="font-style:italic;color:#ffb86c;">glibcLocales
+</span><span>    ];
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Prepare your development environment here
+</span><span>    </span><span style="color:#50fa7b;">shellHook </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&#39;&#39;
+</span><span style="color:#f1fa8c;">      # Set LANG for locales
+</span><span style="color:#f1fa8c;">      # Otherwise it is unset when running &quot;nix-shell --pure&quot;
+</span><span style="color:#f1fa8c;">      export LANG=&quot;C.UTF-8&quot;
+</span><span style="color:#f1fa8c;">
+</span><span style="color:#f1fa8c;">      # Keep Mix and Hex data in the project
+</span><span style="color:#f1fa8c;">      # Be sure to ignore those directories in your `.gitignore`
+</span><span style="color:#f1fa8c;">      export MIX_HOME=&quot;$PWD/.nix-mix&quot;
+</span><span style="color:#f1fa8c;">      export HEX_HOME=&quot;$PWD/.nix-hex&quot;
+</span><span style="color:#f1fa8c;">      mkdir -p &quot;$MIX_HOME&quot; &quot;$HEX_HOME&quot;
+</span><span style="color:#f1fa8c;">      # Put executables from Mix and Hex directories in $PATH
+</span><span style="color:#f1fa8c;">      export PATH=&quot;$MIX_HOME/bin:$MIX_HOME/escripts:$HEX_HOME/bin:$PATH&quot;
+</span><span style="color:#f1fa8c;">
+</span><span style="color:#f1fa8c;">      # Set development environment for Mix
+</span><span style="color:#f1fa8c;">      export MIX_ENV=dev
+</span><span style="color:#f1fa8c;">
+</span><span style="color:#f1fa8c;">      # Persist history of the IEx (Elixir) and erl (Erlang) shells
+</span><span style="color:#f1fa8c;">      export ERL_AFLAGS=&quot;-kernel shell_history enabled&quot;
+</span><span style="color:#f1fa8c;">
+</span><span style="color:#f1fa8c;">      # Set the path to the rebar3 package from Nix
+</span><span style="color:#f1fa8c;">      mix local.rebar --if-missing rebar3 </span><span style="font-style:italic;color:#ff79c6;">${</span><span style="font-style:italic;color:#ffb86c;">erlang</span><span style="font-style:italic;color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">rebar3</span><span style="font-style:italic;color:#ff79c6;">}</span><span style="color:#f1fa8c;">/bin/rebar3
+</span><span style="color:#f1fa8c;">    &#39;&#39;</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Without this, there are warnings about LANG, LC_ALL and locales.
+</span><span>    </span><span style="color:#6272a4;"># Many tests fail due those warnings showing up in test outputs too...
+</span><span>    </span><span style="color:#6272a4;"># This is from https://gist.github.com/aabs/fba5cd1a8038fb84a46909250d34a5c1
+</span><span>    </span><span style="color:#50fa7b;">LOCALE_ARCHIVE </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&quot;</span><span style="font-style:italic;color:#ff79c6;">${</span><span style="font-style:italic;color:#ffb86c;">glibcLocales</span><span style="font-style:italic;color:#ff79c6;">}</span><span style="color:#f1fa8c;">/lib/locale/locale-archive&quot;</span><span>;
+</span><span>  }
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>Give this <em>nix-shell</em> a try by copying it in one of your <em>Elixir</em> projects, then
+running <code>nix-shell --pure</code>. Adapt it to your needs, perhaps you want to change
+the <em>Elixir</em> or <em>Erlang</em> version. There is a <strong>lot</strong> of information on the <em>Nix</em>
+packages available for <em>Elixir</em> and <em>Erlang</em> on
+<a href="https://github.com/NixOS/nixpkgs/blob/f26896669bc5a92d879f7d34c9458e8c44635ab5/doc/languages-frameworks/beam.section.md"><em>GitHub</em></a>.
+Regarding other <em>Nix</em> packages, you can find them with the <a href="https://search.nixos.org/packages"><em>Nix</em> Search</a>.</p>
+<h2 id="will-you-reproduce-this"><a class="zola-anchor" href="#will-you-reproduce-this" aria-label="Anchor link for: will-you-reproduce-this">Will You Reproduce This?</a></h2>
+<p>Give it a try!</p>
+
+        </section>
+    </article>
+</main>
+
+    </div>
+</body>
+
+</html>

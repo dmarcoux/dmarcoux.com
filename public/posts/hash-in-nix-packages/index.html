@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+
+    
+    
+        <link rel="canonical" href="https://dmarcoux.com/posts/hash-in-nix-packages/" />
+        <meta property="og:url" content="https://dmarcoux.com/posts/hash-in-nix-packages/" />
+    
+
+    
+        
+    
+
+    
+    
+    
+
+    <meta property="og:title" content="Use lib.fakeHash as a Placeholder for Hashes in Nix Packages" />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://dmarcoux.com/images/og_image.png" />
+    <meta property="og:locale" content="en" />
+
+    
+    
+    
+    
+
+    
+    
+    <meta property="og:description" content="When you create a Nix package for a given software, you sometimes need to enter a hash, which you might not know. For such instances, use lib.fakeHash." />
+    <meta name="description" content="When you create a Nix package for a given software, you sometimes need to enter a hash, which you might not know. For such instances, use lib.fakeHash." />
+
+    
+    
+    
+    
+    <meta name="keywords" content="Nix, NixOS, packaging, packages, lib.fakeHash, hash, hashes" />
+
+    
+    <title>
+        
+            Dany Marcoux | Use lib.fakeHash as a Placeholder for Hashes in Nix Packages
+        
+    </title>
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="https://dmarcoux.com/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://dmarcoux.com/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://dmarcoux.com/favicon/favicon-16x16.png">
+    <link rel="manifest" href="https://dmarcoux.com/favicon/site.webmanifest">
+
+    
+    
+        <link href=https://dmarcoux.com/fonts.css rel="stylesheet" />
+    
+
+    
+    <script src=https://dmarcoux.com/js/codeblock.js></script>
+
+    
+    <link rel="alternate" type="application/rss+xml" title="Dany Marcoux" href="https://dmarcoux.com/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="Dany Marcoux" href="https://dmarcoux.com/atom.xml">
+
+    <link rel="stylesheet" type="text/css" media="screen" href=https://dmarcoux.com/main.css />
+
+    
+</head>
+
+
+<body>
+    <div class="content">
+        <header>
+    <div class="main">
+        <a href=https://dmarcoux.com/>Dany Marcoux</a>
+
+        <div class="socials">
+            
+            <a rel="me" href="https:&#x2F;&#x2F;github.com&#x2F;dmarcoux&#x2F;" class="social">
+                <img alt="GitHub icon" src=https://dmarcoux.com/icons/github.svg>
+            </a>
+            
+            <a rel="me" href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;danymarcoux&#x2F;" class="social">
+                <img alt="LinkedIn icon" src=https://dmarcoux.com/icons/linkedin.svg>
+            </a>
+            
+            <a rel="alternate" href="https://dmarcoux.com/atom.xml" class="social">
+                <img alt="Atom feed icon" src=https://dmarcoux.com/icons/atom.svg>
+            </a>
+            <a rel="alternate" href="https://dmarcoux.com/rss.xml" class="social">
+                <img alt="RSS feed icon" src=https://dmarcoux.com/icons/rss.svg>
+            </a>
+        </div>
+    </div>
+
+    <nav>
+        
+        <a href=https://dmarcoux.com/posts style="margin-left: 0.5em">Posts</a>
+        
+    </nav>
+</header>
+
+
+        
+        
+<main>
+    <article>
+        <div class="title">
+            
+    <div class="page-header">
+        <h1>Use lib.fakeHash as a Placeholder for Hashes in Nix Packages</h1>
+    </div>
+
+
+                <div class="meta">
+                    
+                        Posted on <time>30&#x2F;Sep&#x2F;2024</time>
+                    
+
+                    
+
+                    
+
+                    
+                    
+
+                    
+
+                </div>
+        </div>
+
+        
+
+        <section class="body">
+            <p>When you create a Nix package for a given software, you sometimes need to enter a
+hash, which you might not know. An example of this is when you fetch the
+software's source code from GitHub with <code>fetchFromGitHub</code>. For such instances,
+temporarily import <code>lib</code> and use <code>lib.fakeHash</code>. Here's an example below for a
+Rust package:</p>
+<pre data-lang="nix" style="background-color:#282a36;color:#f8f8f2;" class="language-nix "><code class="language-nix" data-lang="nix"><span>{ </span><span style="font-style:italic;color:#ffb86c;">lib</span><span style="color:#ff79c6;">, </span><span style="font-style:italic;color:#ffb86c;">fetchFromGitHub</span><span style="color:#ff79c6;">, </span><span style="font-style:italic;color:#ffb86c;">rustPlatform </span><span>}:
+</span><span>
+</span><span style="font-style:italic;color:#ffb86c;">rustPlatform</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">buildRustPackage </span><span style="color:#ff79c6;">rec </span><span>{
+</span><span>  </span><span style="color:#50fa7b;">pname </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&quot;caffeinate&quot;</span><span>;
+</span><span>  </span><span style="color:#50fa7b;">version </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&quot;e20985a4b630eb5c76e16c2547da0aba65f097d5&quot;</span><span>;
+</span><span>
+</span><span>  </span><span style="color:#50fa7b;">src </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">fetchFromGitHub </span><span>{
+</span><span>    </span><span style="color:#50fa7b;">owner </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&quot;rschmukler&quot;</span><span>;
+</span><span>    </span><span style="color:#50fa7b;">repo </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">pname</span><span>;
+</span><span>    </span><span style="color:#50fa7b;">rev </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">version</span><span>;
+</span><span>    </span><span style="color:#50fa7b;">hash </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">lib</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">fakeHash</span><span>;
+</span><span>  };
+</span><span>
+</span><span>  </span><span style="color:#50fa7b;">cargoHash </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">lib</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">fakeHash</span><span>;
+</span><span>
+</span><span>  </span><span style="color:#50fa7b;">meta </span><span style="color:#ff79c6;">= with </span><span style="font-style:italic;color:#ffb86c;">lib</span><span>; {
+</span><span>    </span><span style="color:#50fa7b;">description </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&quot;Command-line app bringing caffeinate functionality to xidlehook&quot;</span><span>;
+</span><span>    </span><span style="color:#50fa7b;">homepage </span><span style="color:#ff79c6;">= </span><span style="color:#f1fa8c;">&quot;https://github.com/rschmukler/caffeinate&quot;</span><span>;
+</span><span>    </span><span style="color:#50fa7b;">license </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#ffb86c;">licenses</span><span style="color:#ff79c6;">.</span><span style="font-style:italic;color:#ffb86c;">mit</span><span>;
+</span><span>    </span><span style="color:#50fa7b;">maintainers </span><span style="color:#ff79c6;">= with </span><span style="font-style:italic;color:#ffb86c;">maintainers</span><span>; [ </span><span style="font-style:italic;color:#ffb86c;">dmarcoux </span><span>];
+</span><span>  };
+</span><span>}
+</span></code></pre>
+<p>See the two instances of <code>lib.fakeHash</code> above? Try to build the package now,
+like in your NixOS configuration with <code>callPackage ./your_package_file.nix {}</code>.
+The build fails with an error message similar to this:</p>
+<pre data-lang="bash" style="background-color:#282a36;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#50fa7b;">error:</span><span> hash mismatch in fixed-output derivation </span><span style="color:#f1fa8c;">&#39;/nix/store/nkbm7cpsyz46bbzynk0bzc309wbmlszn-caffeinate-e20985a4b630eb5c76e16c2547da0aba65f097d5-vendor.tar.gz.drv&#39;</span><span>:
+</span><span>         </span><span style="color:#50fa7b;">specified:</span><span> sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+</span><span>            </span><span style="color:#50fa7b;">got:</span><span>    sha256-ss0J+L3XWwV96AAuLScYl2FiK4K76XK35mPmDF/TAAg=
+</span></code></pre>
+<p>The last line of the error message contains the actual hash, see <code>got: sha256-(...)</code>. You can now replace <code>lib.fakeHash</code> with that value. If everything
+else is fine, the package will now successfully build. Do not forget to remove
+the <code>lib</code> import if you have no other use for it.</p>
+<p>Et voilà! I hope this helps you in your next Nix packaging endeavours.</p>
+
+        </section>
+    </article>
+</main>
+
+    </div>
+</body>
+
+</html>
