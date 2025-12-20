@@ -1,6 +1,6 @@
 [tools]
 # Static site generator
-zola = "0.19.2"
+zola = "0.21.0"
 # Linter for Markdown files
 markdownlint-cli2 = "0.14.0"
 
@@ -13,7 +13,3 @@ alias = "s"
 description = "Lint Markdown files"
 run = "markdownlint-cli2 '**/*.md'"
 alias = "l"
-
-# TODO: This would be nice once configuration by file is available for Cloudflare Pages. Adapt the command below to read from mise.toml
-# Ensure `ZOLA_VERSION` in `netlify.toml` matches the installed version of Zola. This is a safeguard, since it's too easy to forget doing this...
-# zola --version | sed -e "s|zola \(.*\)|\1|g" | xargs -I % sh -c "sed --in-place -e 's|ZOLA_VERSION = .*|ZOLA_VERSION = \"%\"|g' netlify.toml"
