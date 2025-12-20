@@ -1,5 +1,2 @@
-# NPM from nix-shell
-.npm-packages/
-
 # Generated Zola
 public/
