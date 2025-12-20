@@ -43,10 +43,11 @@ to the default site name provided by Cloudflare Pages.
 
 ### Settings
 
-Everything is configured via Wrangler in [wrangler.toml](./wrangler.toml)
+Everything is configured via Wrangler in [wrangler.toml](./wrangler.toml).
 
-I use Cloudflare Pages with static HTML since Zola isn't supported in Cloudflare
-Pages v2+.
+I use Cloudflare Pages with static HTML since Zola isn't supported in
+[Cloudflare Pages
+v2+](https://developers.cloudflare.com/pages/configuration/build-image/).
 
 ## Credits
 
