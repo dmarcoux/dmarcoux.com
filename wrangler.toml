@@ -1,12 +1,4 @@
-# TODO: This file is ignored until I switch to build v2 or v3 for Cloudflare Pages
-#       Cloudflare documentation: https://developers.cloudflare.com/pages/functions/wrangler-configuration/#requirements.
-#       See Zola's docs: https://www.getzola.org/documentation/deployment/cloudflare-pages/ for workarounds.
+# https://developers.cloudflare.com/pages/functions/wrangler-configuration/
 name = "dmarcoux-com"
 pages_build_output_dir = "public"
 compatibility_date = "2024-08-31"
-
-[vars]
-ZOLA_VERSION = "0.21.0"
-
-[env.production.vars]
-CF_PAGES_URL = "https://dmarcoux.com"

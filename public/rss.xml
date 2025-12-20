@@ -1,0 +1,871 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Dany Marcoux</title>
+      <link>https://dmarcoux.com</link>
+      <description>Software and DevOps engineer with 12+ years of experience. I write about web development, DevOps, Ruby, Elixir and more.</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://dmarcoux.com/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Tue, 01 Oct 2024 00:00:00 +0000</lastBuildDate>
+      <item>
+          <title>Lint Markdown files with markdownlint in GitHub Actions</title>
+          <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
+          <author>Dany Marcoux</author>
+          <link>https://dmarcoux.com/posts/ci-with-markdownlint/</link>
+          <guid>https://dmarcoux.com/posts/ci-with-markdownlint/</guid>
+          <description xml:base="https://dmarcoux.com/posts/ci-with-markdownlint/">&lt;p&gt;Sometimes I wonder... am I the only one with this &lt;small&gt;tiny little&lt;&#x2F;small&gt;
+obsession for consistency in how I write &lt;em&gt;Markdown&lt;&#x2F;em&gt; files? Hell no! See the
+folks behind &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;DavidAnson&#x2F;markdownlint&quot;&gt;markdownlint&lt;&#x2F;a&gt;, they
+definitely have the same itch. With this linter and its
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;DavidAnson&#x2F;markdownlint-cli2&quot;&gt;CLI&lt;&#x2F;a&gt;, gone are the chaotic
+days of incongruous &lt;em&gt;Markdown&lt;&#x2F;em&gt; files. Now, I can sleep better again, and you can
+too! &lt;small&gt;(Not based on scientific evidence... but who knows?)&lt;&#x2F;small&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Don&#x27;t go sleep yet though, let&#x27;s start lintin&#x27; those pesky &lt;em&gt;Markdown&lt;&#x2F;em&gt; files with
+&lt;em&gt;markdownlint&lt;&#x2F;em&gt;. You&#x27;ll even see how this can be nicely added to a project&#x27;s
+continuous integration (CI) with &lt;em&gt;GitHub Actions&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;1-2-3-lint&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#1-2-3-lint&quot; aria-label=&quot;Anchor link for: 1-2-3-lint&quot;&gt;1, 2, 3 ― Lint!&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;You don&#x27;t run before you walk, ehm... I mean you don&#x27;t lint &lt;em&gt;Markdown&lt;&#x2F;em&gt; files
+before you install &lt;em&gt;markdownlint&lt;&#x2F;em&gt;&#x27;s CLI:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;npm&lt;&#x2F;span&gt;&lt;span&gt; install markdownlint-cli2@0.14.0&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; --global
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Done? Great! In a repository with some &lt;em&gt;Markdown&lt;&#x2F;em&gt; files, execute this command to
+lint them all:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;markdownlint-cli2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;**&#x2F;*.md&amp;#39; &amp;#39;#vendor&amp;#39;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In the snippet above, I showcase how you can exclude a directory. Any file under
+the &lt;code&gt;vendor&lt;&#x2F;code&gt; directory won&#x27;t be linted. You can omit this part if you don&#x27;t need
+it.&lt;&#x2F;p&gt;
+&lt;p&gt;Now you tell me &lt;em&gt;&quot;What&#x27;s the point of having a tool if I cannot make it my
+own?&quot;&lt;&#x2F;em&gt;. After all, it&#x27;s your files and repositories, your rules! Just put them in
+&lt;code&gt;.markdownlint.yml&lt;&#x2F;code&gt;...&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;yaml&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-yaml &quot;&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Default state for all rules
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;default&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;true
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Trailing punctuation in headings
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;MD026&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# The following punctuation characters aren&amp;#39;t accepted in headings
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# This differs from the default configuration by accepting exclamation marks in headings
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;punctuation&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;.,;:。，；：&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;And if this isn&#x27;t enough for you... &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;DavidAnson&#x2F;markdownlint&#x2F;blob&#x2F;main&#x2F;doc&#x2F;Rules.md&quot;&gt;go wild with the
+rules&lt;&#x2F;a&gt;, the
+world is yours!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;time-for-a-bit-of-github-action-s&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#time-for-a-bit-of-github-action-s&quot; aria-label=&quot;Anchor link for: time-for-a-bit-of-github-action-s&quot;&gt;Time for a Bit of (GitHub) Action(s)&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;So you have a &lt;em&gt;GitHub&lt;&#x2F;em&gt; repository, maybe two or even more (&lt;em&gt;impressive!&lt;&#x2F;em&gt;), and they
+all got some &lt;em&gt;Markdown&lt;&#x2F;em&gt; files you want to lint? It&#x27;s your lucky day ― automate
+this with a sweet continuous integration built with &lt;em&gt;GitHub Actions&lt;&#x2F;em&gt;. Create the
+file &lt;code&gt;.github&#x2F;workflows&#x2F;lint.yml&lt;&#x2F;code&gt; with this &lt;em&gt;YAML&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;yaml&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-yaml &quot;&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;Lint
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Run this workflow when a commit is pushed to `main`
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;push&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;branches&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;main
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Run this workflow on any PR targeting `main`
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;pull_request&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;branches&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;main
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;jobs&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;lint&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;runs-on&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;ubuntu-24.04
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;steps&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# https:&#x2F;&#x2F;github.com&#x2F;actions&#x2F;checkout
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;actions&#x2F;checkout@v4
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# https:&#x2F;&#x2F;github.com&#x2F;actions&#x2F;setup-node
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;actions&#x2F;setup-node@v4
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;Install CLI for markdownlint
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;npm install markdownlint-cli2@0.14.0 --global
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;Lint Markdown files, while excluding anything under the node_modules directories (which is generated by `npm install` above)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;markdownlint-cli2 &amp;quot;**&#x2F;*.md&amp;quot; &amp;quot;#node_modules&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;Every commit pushed to &lt;code&gt;main&lt;&#x2F;code&gt; and PRs targeting &lt;code&gt;main&lt;&#x2F;code&gt; will now lint &lt;em&gt;Markdown&lt;&#x2F;em&gt;
+files automatically in your continuous integration. Automation is the best!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-bit-too-eager&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#a-bit-too-eager&quot; aria-label=&quot;Anchor link for: a-bit-too-eager&quot;&gt;A Bit Too Eager?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Maybe &lt;em&gt;markdownlint&lt;&#x2F;em&gt; is sometimes a bit too trigger-happy? Calm it down for a
+few lines, like in this example below:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;markdown&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-markdown &quot;&gt;&lt;code class=&quot;language-markdown&quot; data-lang=&quot;markdown&quot;&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;&amp;lt;!-- markdownlint-disable --&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;Markdown which doesn&amp;#39;t satisfy some &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;*markdownlint*&lt;&#x2F;span&gt;&lt;span&gt; rule(s).
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;&amp;lt;!-- markdownlint-enable --&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;do-you-even-lint&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#do-you-even-lint&quot; aria-label=&quot;Anchor link for: do-you-even-lint&quot;&gt;Do You Even Lint?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Yes, you do now! Linting &lt;em&gt;Markdown&lt;&#x2F;em&gt; files, then having this run with &lt;em&gt;GitHub
+Actions&lt;&#x2F;em&gt;, it&#x27;s awesome. Keep those files in check, while I &lt;small&gt;subtly&lt;&#x2F;small&gt;
+go to bed... I did hint about getting a better sleep now 🥳. But in all
+seriousness, enjoy your day!&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Use lib.fakeHash as a Placeholder for Hashes in Nix Packages</title>
+          <pubDate>Mon, 30 Sep 2024 00:00:00 +0000</pubDate>
+          <author>Dany Marcoux</author>
+          <link>https://dmarcoux.com/posts/hash-in-nix-packages/</link>
+          <guid>https://dmarcoux.com/posts/hash-in-nix-packages/</guid>
+          <description xml:base="https://dmarcoux.com/posts/hash-in-nix-packages/">&lt;p&gt;When you create a Nix package for a given software, you sometimes need to enter a
+hash, which you might not know. An example of this is when you fetch the
+software&#x27;s source code from GitHub with &lt;code&gt;fetchFromGitHub&lt;&#x2F;code&gt;. For such instances,
+temporarily import &lt;code&gt;lib&lt;&#x2F;code&gt; and use &lt;code&gt;lib.fakeHash&lt;&#x2F;code&gt;. Here&#x27;s an example below for a
+Rust package:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span&gt;{ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;fetchFromGitHub&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;rustPlatform &lt;&#x2F;span&gt;&lt;span&gt;}:
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;rustPlatform&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;buildRustPackage &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;rec &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;pname &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;caffeinate&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;version &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;e20985a4b630eb5c76e16c2547da0aba65f097d5&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;src &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;fetchFromGitHub &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;owner &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;rschmukler&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repo &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;pname&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;rev &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;version&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;hash &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;fakeHash&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  };
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;cargoHash &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;fakeHash&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;meta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= with &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;lib&lt;&#x2F;span&gt;&lt;span&gt;; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;description &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;Command-line app bringing caffeinate functionality to xidlehook&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;homepage &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;https:&#x2F;&#x2F;github.com&#x2F;rschmukler&#x2F;caffeinate&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;license &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;licenses&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;mit&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;maintainers &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= with &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;maintainers&lt;&#x2F;span&gt;&lt;span&gt;; [ &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;dmarcoux &lt;&#x2F;span&gt;&lt;span&gt;];
+&lt;&#x2F;span&gt;&lt;span&gt;  };
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;See the two instances of &lt;code&gt;lib.fakeHash&lt;&#x2F;code&gt; above? Try to build the package now,
+like in your NixOS configuration with &lt;code&gt;callPackage .&#x2F;your_package_file.nix {}&lt;&#x2F;code&gt;.
+The build fails with an error message similar to this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;error:&lt;&#x2F;span&gt;&lt;span&gt; hash mismatch in fixed-output derivation &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;&#x2F;nix&#x2F;store&#x2F;nkbm7cpsyz46bbzynk0bzc309wbmlszn-caffeinate-e20985a4b630eb5c76e16c2547da0aba65f097d5-vendor.tar.gz.drv&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;         &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;specified:&lt;&#x2F;span&gt;&lt;span&gt; sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;got:&lt;&#x2F;span&gt;&lt;span&gt;    sha256-ss0J+L3XWwV96AAuLScYl2FiK4K76XK35mPmDF&#x2F;TAAg=
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The last line of the error message contains the actual hash, see &lt;code&gt;got: sha256-(...)&lt;&#x2F;code&gt;. You can now replace &lt;code&gt;lib.fakeHash&lt;&#x2F;code&gt; with that value. If everything
+else is fine, the package will now successfully build. Do not forget to remove
+the &lt;code&gt;lib&lt;&#x2F;code&gt; import if you have no other use for it.&lt;&#x2F;p&gt;
+&lt;p&gt;Et voilà! I hope this helps you in your next Nix packaging endeavours.&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Manage a Music Collection with whipper, beets, Terraform and rclone</title>
+          <pubDate>Mon, 31 Jul 2023 00:00:00 +0000</pubDate>
+          <author>Dany Marcoux</author>
+          <link>https://dmarcoux.com/posts/manage-music-collection/</link>
+          <guid>https://dmarcoux.com/posts/manage-music-collection/</guid>
+          <description xml:base="https://dmarcoux.com/posts/manage-music-collection/">&lt;p&gt;I enjoy listening to music and some time ago after cancelling my subscription to
+a music streaming service, I decided to go back to owning music again. I wanted
+to listen to my music across multiple devices, so I streamlined my setup until I
+was satisfied with it. This is how I organize my digital music collection on a
+Linux-based workflow, but the tools are available on Windows and Mac OS. Details
+on some concepts might be left out, since this blog post is more of a notebook
+for myself to get this out of my head. Anyway, perhaps it can still help out
+someone.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ripping-cds-with-whipper&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#ripping-cds-with-whipper&quot; aria-label=&quot;Anchor link for: ripping-cds-with-whipper&quot;&gt;Ripping CDs With whipper&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;The albums I own are partly in a digital format while others are CDs. I want all
+my music to be in &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;FLAC&quot;&gt;FLAC&lt;&#x2F;a&gt;, a lossless format
+to have the best sound quality possible and even though this takes more storage
+space than a lossy format like MP3, I don&#x27;t care since storage is cheap nowadays.&lt;&#x2F;p&gt;
+&lt;p&gt;I rely on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;whipper-team&#x2F;whipper&quot;&gt;whipper&lt;&#x2F;a&gt; to accurately rip
+my CDs. To avoid needing to worry about the required dependencies for &lt;em&gt;whipper&lt;&#x2F;em&gt;,
+I use its &lt;a href=&quot;https:&#x2F;&#x2F;hub.docker.com&#x2F;r&#x2F;whipperteam&#x2F;whipper&quot;&gt;&lt;em&gt;Docker&lt;&#x2F;em&gt; image&lt;&#x2F;a&gt;
+provided by the developers themselves.&lt;&#x2F;p&gt;
+&lt;p&gt;Here is an example of how I use &lt;em&gt;whipper&lt;&#x2F;em&gt; with &lt;em&gt;Docker&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;docker&lt;&#x2F;span&gt;&lt;span&gt; run&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; -ti --rm --device&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;dev&#x2F;cdrom \
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;--mount&lt;&#x2F;span&gt;&lt;span&gt; type=bind,source=${&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;HOME&lt;&#x2F;span&gt;&lt;span&gt;}&#x2F;.config&#x2F;whipper,target=&#x2F;home&#x2F;worker&#x2F;.config&#x2F;whipper \
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;--mount&lt;&#x2F;span&gt;&lt;span&gt; type=bind,source=${&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;HOME&lt;&#x2F;span&gt;&lt;span&gt;}&#x2F;music-to-import,target=&#x2F;output \
+&lt;&#x2F;span&gt;&lt;span&gt;whipperteam&#x2F;whipper:0.10.0 cd rip&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; --prompt
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;&lt;code&gt;--device=&#x2F;dev&#x2F;cdrom&lt;&#x2F;code&gt; refers to the CD drive in my computer.&lt;&#x2F;p&gt;
+&lt;p&gt;Both &lt;code&gt;--mount&lt;&#x2F;code&gt; options are bound to directories which must exist, otherwise the
+command won&#x27;t work. It&#x27;s as simple as running &lt;code&gt;mkdir -p &quot;${HOME}&#x2F;.config&#x2F;whipper&quot; &quot;${HOME}&#x2F;music-to-import&quot;&lt;&#x2F;code&gt; to address this.&lt;&#x2F;p&gt;
+&lt;p&gt;The first &lt;code&gt;--mount&lt;&#x2F;code&gt; is to mount the &lt;em&gt;whipper&lt;&#x2F;em&gt; configuration into the &lt;em&gt;Docker&lt;&#x2F;em&gt;
+container. This configuration was generated with &lt;code&gt;whipper drive analyze&lt;&#x2F;code&gt;, so the
+same command as above, but by replacing &lt;code&gt;cd rip&lt;&#x2F;code&gt; for &lt;code&gt;drive analyze&lt;&#x2F;code&gt;. After
+executing &lt;code&gt;drive analyze&lt;&#x2F;code&gt;, it is also needed to run &lt;code&gt;drive offset&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The second &lt;code&gt;--mount&lt;&#x2F;code&gt; is where &lt;em&gt;whipper&lt;&#x2F;em&gt; will output the songs from CDs it ripped.&lt;&#x2F;p&gt;
+&lt;p&gt;As for &lt;code&gt;whipperteam&#x2F;whipper:0.10.0&lt;&#x2F;code&gt;, this is using the latest &lt;em&gt;whipper&lt;&#x2F;em&gt; version at
+the time of writing.&lt;&#x2F;p&gt;
+&lt;p&gt;Finally, &lt;code&gt;cd rip&lt;&#x2F;code&gt; is the command passed to &lt;em&gt;whipper&lt;&#x2F;em&gt;. It would be the same as
+running &lt;code&gt;whipper cd rip&lt;&#x2F;code&gt; if &lt;em&gt;whipper&lt;&#x2F;em&gt; was installed as a package on my computer.
+As for the &lt;code&gt;--prompt&lt;&#x2F;code&gt; flag, this is for &lt;em&gt;whipper&lt;&#x2F;em&gt; to let me decide which CD
+release to pick if somehow multiple matches are available. This happens often
+for CDs with releases in multiple countries or with various editions like deluxe
+or what not.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;cataloging-music-with-beets&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#cataloging-music-with-beets&quot; aria-label=&quot;Anchor link for: cataloging-music-with-beets&quot;&gt;Cataloging Music With beets&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;I am using &lt;a href=&quot;https:&#x2F;&#x2F;beets.io&#x2F;&quot;&gt;beets&lt;&#x2F;a&gt; since I haven&#x27;t found another software as
+good to correctly catalog my music. It takes care of handling the metadata
+that it fetches from &lt;a href=&quot;https:&#x2F;&#x2F;musicbrainz.org&#x2F;&quot;&gt;MusicBrainz&lt;&#x2F;a&gt;. One cool thing
+about &lt;em&gt;beets&lt;&#x2F;em&gt; is how flexible it is with its various plugins.&lt;&#x2F;p&gt;
+&lt;p&gt;Command example to import music into my music collection:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;beet&lt;&#x2F;span&gt;&lt;span&gt; import path&#x2F;to&#x2F;music&#x2F;album-1 path&#x2F;to&#x2F;music&#x2F;album-2 (...)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;For details on how I configured &lt;em&gt;beets&lt;&#x2F;em&gt; and some of its plugins, my configuration
+is in my
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;dmarcoux&#x2F;dotfiles&#x2F;blob&#x2F;09696224f416e37c57233c09e08e0b3267ddf332&#x2F;home-manager&#x2F;beets.nix&quot;&gt;dotfiles&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;backing-up-my-music-collection&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#backing-up-my-music-collection&quot; aria-label=&quot;Anchor link for: backing-up-my-music-collection&quot;&gt;Backing Up My Music Collection&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Beside having my music both on my computer and my phone, I also back it up on my
+home server and a cloud provider.&lt;&#x2F;p&gt;
+&lt;p&gt;There are many cloud providers available. I had a few criteria to guide my
+decision:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Based in Europe, since this is where live.&lt;&#x2F;li&gt;
+&lt;li&gt;Reliability&lt;&#x2F;li&gt;
+&lt;li&gt;Resilience&lt;&#x2F;li&gt;
+&lt;li&gt;Environmental impact&lt;&#x2F;li&gt;
+&lt;li&gt;Pricing&lt;&#x2F;li&gt;
+&lt;li&gt;Have a S3-compatible API to ease automation&lt;&#x2F;li&gt;
+&lt;li&gt;Availability of cold storage for long-term archival&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;With this in mind, this is why I went with the cloud provider
+&lt;a href=&quot;https:&#x2F;&#x2F;www.scaleway.com&#x2F;&quot;&gt;Scaleway&lt;&#x2F;a&gt; for &lt;em&gt;Scaleway Glacier&lt;&#x2F;em&gt;, a subset of their
+&lt;em&gt;Scaleway Object Storage&lt;&#x2F;em&gt; product. It offers a &lt;em&gt;cold&lt;&#x2F;em&gt; storage solution for
+long-term archival in the Paris region. This is perfect for my needs.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;provisioning-the-infrastructure-with-terraform&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#provisioning-the-infrastructure-with-terraform&quot; aria-label=&quot;Anchor link for: provisioning-the-infrastructure-with-terraform&quot;&gt;Provisioning the Infrastructure with Terraform&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;While I could create the infrastructure in the &lt;em&gt;Scaleway&lt;&#x2F;em&gt; web UI, I always
+prefer to achieve this through code. &lt;em&gt;Terraform&lt;&#x2F;em&gt;, an Infrastructure as
+Code (IaC) tool, is a great fit for this.&lt;&#x2F;p&gt;
+&lt;p&gt;What I need is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;a bucket to store my music collection&lt;&#x2F;li&gt;
+&lt;li&gt;an IAM application with limited privileges to sync my music in the bucket via &lt;code&gt;rclone&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Let&#x27;s first write a &lt;em&gt;Terraform&lt;&#x2F;em&gt; configuration file named &lt;code&gt;main.tf&lt;&#x2F;code&gt;. Be sure to
+replace the placeholder &lt;code&gt;BUCKET_NAME&lt;&#x2F;code&gt; and the values in &lt;code&gt;locals&lt;&#x2F;code&gt;. Remember that
+the bucket name must be globally unique, so across all &lt;em&gt;Scaleway&lt;&#x2F;em&gt;&#x27;s buckets. If
+needed, adapt the zone and region.&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;terraform&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-terraform &quot;&gt;&lt;code class=&quot;language-terraform&quot; data-lang=&quot;terraform&quot;&gt;&lt;span&gt;terraform {
+&lt;&#x2F;span&gt;&lt;span&gt;  required_providers {
+&lt;&#x2F;span&gt;&lt;span&gt;    scaleway = {
+&lt;&#x2F;span&gt;&lt;span&gt;      source = &amp;quot;scaleway&#x2F;scaleway&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;  required_version = &amp;quot;&amp;gt;= 0.13&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;# Documentation: https:&#x2F;&#x2F;registry.terraform.io&#x2F;providers&#x2F;scaleway&#x2F;scaleway&#x2F;latest&#x2F;docs
+&lt;&#x2F;span&gt;&lt;span&gt;provider &amp;quot;scaleway&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  zone   = &amp;quot;fr-par-1&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  region = &amp;quot;fr-par&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;locals {
+&lt;&#x2F;span&gt;&lt;span&gt;  # Found at https:&#x2F;&#x2F;console.scaleway.com&#x2F;iam&#x2F;users
+&lt;&#x2F;span&gt;&lt;span&gt;  # An IAM user which should have access to the bucket if needed, for example
+&lt;&#x2F;span&gt;&lt;span&gt;  # via the web UI or the AWS CLI with `aws s3`. It could be the default IAM
+&lt;&#x2F;span&gt;&lt;span&gt;  # user, but it does not have to.
+&lt;&#x2F;span&gt;&lt;span&gt;  IAM_user_id = &amp;quot;11111111-1111-1111-1111-111111111111&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  # Found at https:&#x2F;&#x2F;console.scaleway.com&#x2F;project
+&lt;&#x2F;span&gt;&lt;span&gt;  project_id = &amp;quot;11111111-1111-1111-1111-111111111111&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;# IAM application with limited privileges to sync objects in the bucket via `rclone`
+&lt;&#x2F;span&gt;&lt;span&gt;resource &amp;quot;scaleway_iam_application&amp;quot; &amp;quot;API-Object_Storage&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  name        = &amp;quot;API - Object Storage&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  description = &amp;quot;This is to restrict an API key only to the Object Storage buckets&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;resource &amp;quot;scaleway_iam_policy&amp;quot; &amp;quot;API-Object_Storage&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  name = &amp;quot;Object Storage - Buckets Read Write - Objects Read Write Delete&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  application_id = scaleway_iam_application.API-Object_Storage.id
+&lt;&#x2F;span&gt;&lt;span&gt;  rule {
+&lt;&#x2F;span&gt;&lt;span&gt;      permission_set_names = [
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;quot;ObjectStorageBucketsRead&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;quot;ObjectStorageBucketsWrite&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;quot;ObjectStorageObjectsDelete&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;quot;ObjectStorageObjectsRead&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;quot;ObjectStorageObjectsWrite&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      ]
+&lt;&#x2F;span&gt;&lt;span&gt;      project_ids = [
+&lt;&#x2F;span&gt;&lt;span&gt;          local.project_id,
+&lt;&#x2F;span&gt;&lt;span&gt;      ]
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;# When looking at the state of a resource, its sensitive values will always be masked.
+&lt;&#x2F;span&gt;&lt;span&gt;# I still need to store the secret key of the API key in my password manager.
+&lt;&#x2F;span&gt;&lt;span&gt;# The command below returns the secret key:
+&lt;&#x2F;span&gt;&lt;span&gt;# terraform show -json | jq -r &amp;#39;.values.root_module.resources[] | select(.address==&amp;quot;scaleway_iam_api_key.API-Object_Storage&amp;quot;).values.secret_key&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;resource &amp;quot;scaleway_iam_api_key&amp;quot; &amp;quot;API-Object_Storage&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  application_id = scaleway_iam_application.API-Object_Storage.id
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;# Bucket
+&lt;&#x2F;span&gt;&lt;span&gt;resource &amp;quot;scaleway_object_bucket&amp;quot; &amp;quot;BUCKET_NAME&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  name = &amp;quot;BUCKET_NAME&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;resource &amp;quot;scaleway_object_bucket_acl&amp;quot; &amp;quot;BUCKET_NAME&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  bucket = scaleway_object_bucket.BUCKET_NAME.name
+&lt;&#x2F;span&gt;&lt;span&gt;  acl = &amp;quot;private&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;resource &amp;quot;scaleway_object_bucket_policy&amp;quot; &amp;quot;BUCKET_NAME&amp;quot; {
+&lt;&#x2F;span&gt;&lt;span&gt;  bucket = scaleway_object_bucket.BUCKET_NAME.name
+&lt;&#x2F;span&gt;&lt;span&gt;  policy = templatefile(&amp;quot;${path.module}&#x2F;bucket_policy.tftpl&amp;quot;, {
+&lt;&#x2F;span&gt;&lt;span&gt;    bucket_name = scaleway_object_bucket.BUCKET_NAME.name,
+&lt;&#x2F;span&gt;&lt;span&gt;    IAM_user_id = IAM_USER_ID,
+&lt;&#x2F;span&gt;&lt;span&gt;    IAM_application_id = scaleway_iam_application.API-Object_Storage.id,
+&lt;&#x2F;span&gt;&lt;span&gt;    IAM_application_name = scaleway_iam_application.API-Object_Storage.name
+&lt;&#x2F;span&gt;&lt;span&gt;  })
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;The bucket policy is in a &lt;em&gt;Terraform&lt;&#x2F;em&gt; template file (&lt;code&gt;bucket_policy.tftpl&lt;&#x2F;code&gt;).
+Since the JSON document of a policy can be sometimes quite large, I find this
+approach much easier to reason about than having everything together.&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;terraform&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-terraform &quot;&gt;&lt;code class=&quot;language-terraform&quot; data-lang=&quot;terraform&quot;&gt;&lt;span&gt;${jsonencode({
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;Version&amp;quot;: &amp;quot;2023-04-17&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;Id&amp;quot;: &amp;quot;${bucket_name}-policy&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;quot;Statement&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;    {
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Sid&amp;quot;: &amp;quot;Allow everything in the bucket ${bucket_name} and its objects for my user&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Principal&amp;quot;: {
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;SCW&amp;quot;: &amp;quot;user_id:${IAM_user_id}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      },
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Action&amp;quot;: &amp;quot;*&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Resource&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;${bucket_name}&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;${bucket_name}&#x2F;*&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      ]
+&lt;&#x2F;span&gt;&lt;span&gt;    },
+&lt;&#x2F;span&gt;&lt;span&gt;    {
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Sid&amp;quot;: &amp;quot;Grant access to the bucket ${bucket_name} for the application &amp;#39;${IAM_application_name}&amp;#39;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Principal&amp;quot;: {
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;SCW&amp;quot;: &amp;quot;application_id:${IAM_application_id}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      },
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Action&amp;quot;: &amp;quot;s3:ListBucket&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Resource&amp;quot;: &amp;quot;${bucket_name}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    },
+&lt;&#x2F;span&gt;&lt;span&gt;    {
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Sid&amp;quot;: &amp;quot;Allow reads and writes of objects in the bucket ${bucket_name} for the application &amp;#39;${IAM_application_name}&amp;#39;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Principal&amp;quot;: {
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;SCW&amp;quot;: &amp;quot;application_id:${IAM_application_id}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      },
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Action&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;s3:PutObject&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;s3:GetObject&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      ],
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;quot;Resource&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;${bucket_name}&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;${bucket_name}&#x2F;*&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      ]
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;  ]
+&lt;&#x2F;span&gt;&lt;span&gt;})}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;For &lt;em&gt;Terraform&lt;&#x2F;em&gt; to provision the bucket, it must first authenticate to
+&lt;em&gt;Scaleway&lt;&#x2F;em&gt;. It&#x27;s simple, I create an API key for my IAM user and store its
+&lt;em&gt;Access Key Id&lt;&#x2F;em&gt; and &lt;em&gt;Secret Key&lt;&#x2F;em&gt; in my password manager (&lt;em&gt;1Password&lt;&#x2F;em&gt;). This
+isn&#x27;t the same API key as the one created above with &lt;em&gt;Terraform&lt;&#x2F;em&gt;, it must have
+the permissions to create resources for my &lt;em&gt;Scaleway&lt;&#x2F;em&gt; account.&lt;&#x2F;p&gt;
+&lt;p&gt;By relying on environment variables, I avoid storing secrets on disk. With the
+help of &lt;a href=&quot;https:&#x2F;&#x2F;direnv.net&#x2F;&quot;&gt;direnv&lt;&#x2F;a&gt;, environment variables are automatically
+exported&#x2F;unexported whenever I enter&#x2F;leave the directory containing this
+&lt;code&gt;.envrc&lt;&#x2F;code&gt; file:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;export &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;SCW_ACCESS_KEY&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;op&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt; read &amp;#39;op:&#x2F;&#x2F;reference&#x2F;to&#x2F;Access Key Id&amp;#39;)&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;export &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;SCW_SECRET_KEY&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;op&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt; read &amp;#39;op:&#x2F;&#x2F;reference&#x2F;to&#x2F;Secret Access Key&amp;#39;)&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And now with &lt;code&gt;terraform init&lt;&#x2F;code&gt;, followed by &lt;code&gt;terraform plan&lt;&#x2F;code&gt;, I ensure that the
+bucket would be provisioned as I expect it to. Afterwards, I apply the execution
+plan with &lt;code&gt;terraform apply&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;uploading-objects-to-the-bucket-with-rclone&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#uploading-objects-to-the-bucket-with-rclone&quot; aria-label=&quot;Anchor link for: uploading-objects-to-the-bucket-with-rclone&quot;&gt;Uploading Objects to the Bucket With rclone&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Backing up my music on the bucket I created above with &lt;em&gt;Terraform&lt;&#x2F;em&gt; involves two
+steps. First with &lt;a href=&quot;https:&#x2F;&#x2F;rclone.org&#x2F;&quot;&gt;rclone&lt;&#x2F;a&gt;. It is configurable with &lt;code&gt;rclone config&lt;&#x2F;code&gt;. The configuration is encrypted with a password stored in my password
+manager. This is how the remotes I use are configured in &lt;em&gt;rclone&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;text&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-text &quot;&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;[homeserver]
+&lt;&#x2F;span&gt;&lt;span&gt;type = sftp
+&lt;&#x2F;span&gt;&lt;span&gt;host = MY_HOMESERVER_IP
+&lt;&#x2F;span&gt;&lt;span&gt;user = MY_USER
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;[scaleway-storage-fra-GLACIER]
+&lt;&#x2F;span&gt;&lt;span&gt;type = s3
+&lt;&#x2F;span&gt;&lt;span&gt;provider = Scaleway
+&lt;&#x2F;span&gt;&lt;span&gt;access_key_id = ACCESS_KEY_ID
+&lt;&#x2F;span&gt;&lt;span&gt;secret_access_key = SECRET_ACCESS_KEY
+&lt;&#x2F;span&gt;&lt;span&gt;region = fr-par
+&lt;&#x2F;span&gt;&lt;span&gt;endpoint = s3.fr-par.scw.cloud
+&lt;&#x2F;span&gt;&lt;span&gt;acl = private
+&lt;&#x2F;span&gt;&lt;span&gt;storage_class = GLACIER
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The placeholders &lt;code&gt;ACCESS_KEY_ID&lt;&#x2F;code&gt; and &lt;code&gt;SECRET_ACCESS_KEY&lt;&#x2F;code&gt; both refer to the API
+key belonging to the IAM application created above with &lt;em&gt;Terraform&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Here&#x27;s how I upload my music to my home server:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;rclone&lt;&#x2F;span&gt;&lt;span&gt; copy&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; --progress --checksum &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;music homeserver:&#x2F;path&#x2F;to&#x2F;music&#x2F;directory
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;~&#x2F;music&lt;&#x2F;code&gt; is the folder where my music is located on my computer, after it has
+been processed by &lt;em&gt;beets&lt;&#x2F;em&gt;. &lt;code&gt;homeserver&lt;&#x2F;code&gt; is the remote in &lt;em&gt;rclone&lt;&#x2F;em&gt;, followed by
+the path to the music directory on my home server.&lt;&#x2F;p&gt;
+&lt;p&gt;As for uploading my music to &lt;em&gt;Scaleway Glacier&lt;&#x2F;em&gt;, my home server does it daily
+with a script containing this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;rclone&lt;&#x2F;span&gt;&lt;span&gt; copy&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; --progress --checksum &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;~&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;music scaleway-storage-fra-GLACIER:my-music-collection
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This time, &lt;em&gt;rclone&lt;&#x2F;em&gt; uploads to the &lt;code&gt;scaleway-storage-fra-GLACIER&lt;&#x2F;code&gt; remote which
+stores files in &lt;em&gt;Scaleway Glacier&lt;&#x2F;em&gt;. &lt;code&gt;my-music-collection&lt;&#x2F;code&gt; is the bucket name on
+&lt;em&gt;Scaleway Glacier&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;getting-my-music-collection-to-my-phone&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#getting-my-music-collection-to-my-phone&quot; aria-label=&quot;Anchor link for: getting-my-music-collection-to-my-phone&quot;&gt;Getting My Music Collection To My Phone&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;My phone&#x27;s storage can be expanded via a SD card, so this is what I went with.
+To get my music collection onto the SD card, I could take it out and put it in
+my computer. This is rather cumbersome as I need to take out the battery every
+time. Instead, I usually rely on the &lt;a href=&quot;https:&#x2F;&#x2F;foldersync.io&#x2F;&quot;&gt;FolderSync app&lt;&#x2F;a&gt; on
+Android to easily sync my music from my home server to my phone while I&#x27;m in my
+local network. This is especially convenient when only transferring a few songs.&lt;&#x2F;p&gt;
+&lt;p&gt;And yes, I did give a try to the good old USB cable, but it&#x27;s not reliable on
+Linux. Somehow, my phone isn&#x27;t always detected by the OS and when it does, it
+sometimes gets disconnected for no apparent reason. Oh well... FolderSync it is
+then!&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;how-to-configure-foldersync&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-configure-foldersync&quot; aria-label=&quot;Anchor link for: how-to-configure-foldersync&quot;&gt;How To Configure FolderSync&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;On my home server, I have a user with read-only access. In FolderSync, create an
+account for SMB with this user&#x27;s username and password. Enter the IP address of
+my home server, then the SMB share name where my music collection is stored.
+Pick SMB3 and enable &lt;em&gt;Require encryption&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Afterwards, create a folder pair with the sync type &lt;em&gt;To local folder&lt;&#x2F;em&gt;. Set the
+remote folder to the folder where my music collection is stored on my home
+server. As for the local folder, it is where I want to have my music collection
+on my phone, so as long as it&#x27;s on the SD card, it&#x27;s all good.&lt;&#x2F;p&gt;
+&lt;p&gt;Now for the &lt;em&gt;Sync options&lt;&#x2F;em&gt; of the folder pair, choose &lt;em&gt;Never&lt;&#x2F;em&gt; for the option
+&lt;em&gt;Overwrite old files&lt;&#x2F;em&gt; and choose &lt;em&gt;Use remote file&lt;&#x2F;em&gt; for the option &lt;em&gt;If both local
+and remote file have been modified&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Finally, under &lt;em&gt;Advanced&lt;&#x2F;em&gt;, enable &lt;em&gt;Use MD5 checksums&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;final-countdown&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#final-countdown&quot; aria-label=&quot;Anchor link for: final-countdown&quot;&gt;Final Countdown&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;That&#x27;s it, I hope this helped you. How do you setup your digital music
+collection?&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Reproducible Development Environment for Elixir with Nix</title>
+          <pubDate>Wed, 09 Nov 2022 00:00:00 +0000</pubDate>
+          <author>Dany Marcoux</author>
+          <link>https://dmarcoux.com/posts/reproducible-development-environment-for-elixir-with-nix/</link>
+          <guid>https://dmarcoux.com/posts/reproducible-development-environment-for-elixir-with-nix/</guid>
+          <description xml:base="https://dmarcoux.com/posts/reproducible-development-environment-for-elixir-with-nix/">&lt;p&gt;Recently, I started learning about &lt;em&gt;Elixir&lt;&#x2F;em&gt; and at first, I was somewhat unsure
+about how to setup my development environment. After reading the various
+recommendations from the &lt;em&gt;Elixir&lt;&#x2F;em&gt; community, my questions remained. This is when
+I asked on &lt;em&gt;Twitter&lt;&#x2F;em&gt; to gather more thoughts on the matter. It led me to
+research further how I could setup a reproducible development environment for
+Elixir. I will share with you how I achieved this with &lt;em&gt;Nix&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-nix&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-is-nix&quot; aria-label=&quot;Anchor link for: what-is-nix&quot;&gt;What Is &lt;em&gt;Nix&lt;&#x2F;em&gt;?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Did a colleague or a friend ever tell you &lt;em&gt;&quot;But it works on my computer!&quot;&lt;&#x2F;em&gt; ?
+No...? Well consider yourself lucky then! For the unlucky ones, you know how
+this sucks... you simply want to run some application on your computer and it
+doesn&#x27;t work. It&#x27;s perhaps a missing undocumented dependency or some dependency
+version mismatch.&lt;&#x2F;p&gt;
+&lt;p&gt;You don&#x27;t have to go through this. Do not rely on system packages, this is
+asking for trouble. Leave your runtime versions manager like &lt;em&gt;asdf&lt;&#x2F;em&gt; behind. They
+aren&#x27;t much better. Those approaches aren&#x27;t reliable and reproducible. This is
+where &lt;em&gt;Nix&lt;&#x2F;em&gt; comes in. It&#x27;s a purely functional and cross-platform package manager.
+It can be &lt;a href=&quot;https:&#x2F;&#x2F;nixos.org&#x2F;download.html&quot;&gt;installed&lt;&#x2F;a&gt; in various ways, this
+will depend on your operating system.&lt;&#x2F;p&gt;
+&lt;p&gt;Once you have &lt;em&gt;Nix&lt;&#x2F;em&gt; on your computer, you can create reproducible development
+environment with &lt;em&gt;nix-shell&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-nix-shell-command&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-nix-shell-command&quot; aria-label=&quot;Anchor link for: the-nix-shell-command&quot;&gt;The &lt;em&gt;nix-shell&lt;&#x2F;em&gt; Command&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;One of the commands provided by &lt;em&gt;Nix&lt;&#x2F;em&gt; is &lt;code&gt;nix-shell&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Whenever executing &lt;code&gt;nix-shell --pure&lt;&#x2F;code&gt; in your terminal, the command looks for
+the file &lt;em&gt;shell.nix&lt;&#x2F;em&gt; in the current working directory. This file contains &lt;em&gt;Nix&lt;&#x2F;em&gt;
+code to create a shell or if you prefer, your development environment. As for
+the &lt;code&gt;--pure&lt;&#x2F;code&gt; flag, it ensures your system configuration and its packages do not
+interfere with the shell you created just now. Everything else stays the same in
+this shell, you can freely navigate your filesystem, run a &lt;em&gt;Phoenix&lt;&#x2F;em&gt; application
+or start &lt;em&gt;IEx&lt;&#x2F;em&gt;, the world is yours!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;show-me-the-money&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#show-me-the-money&quot; aria-label=&quot;Anchor link for: show-me-the-money&quot;&gt;Show Me the Money&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Let&#x27;s have a look at a real-world &lt;em&gt;shell.nix&lt;&#x2F;em&gt; example. The comments will walk
+you through what happens. You can horizontally scroll in the code block below if
+it&#x27;s not fully visible on your device.&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;nix&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-nix &quot;&gt;&lt;code class=&quot;language-nix&quot; data-lang=&quot;nix&quot;&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# To ensure this nix-shell is reproducible, we pin the packages index
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# to a commit SHA taken from a channel on https:&#x2F;&#x2F;status.nixos.org&#x2F;.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# This commit is from the nixos-22.05 channel, the current stable channel.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;with &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8be9fd;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;fetchTarball &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;https:&#x2F;&#x2F;github.com&#x2F;NixOS&#x2F;nixpkgs&#x2F;archive&#x2F;8de8b98839d1.tar.gz&lt;&#x2F;span&gt;&lt;span&gt;) {});
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;let
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Set the version of Erlang&#x2F;OTP you want to use, this is Erlang&#x2F;OTP 25.
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# `erlang` is a variable referring to a Nix package
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;erlang &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;beam&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;packages&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;erlangR25&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;in
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;mkShell &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Install Nix packages you want to use in your development environment
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;buildInputs &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;[
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Elixir with Erlang&#x2F;OTP specified in the `erlang` variable defined above.
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Relying on the package `elixir` alone isn&amp;#39;t enough, as the version
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# of Erlang cannot be specified.
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;erlang&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;elixir_1_14
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# The package manager for Erlang
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;erlang&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;hex
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# The build tool for Erlang.
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# If changing this package, do not forget to replicate the change
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# below in `shellHook`.
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;erlang&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;rebar3
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# For the Live Reloading feature in Phoenix
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;inotify-tools
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Locales
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;glibcLocales
+&lt;&#x2F;span&gt;&lt;span&gt;    ];
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Prepare your development environment here
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;shellHook &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Set LANG for locales
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Otherwise it is unset when running &amp;quot;nix-shell --pure&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      export LANG=&amp;quot;C.UTF-8&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Keep Mix and Hex data in the project
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Be sure to ignore those directories in your `.gitignore`
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      export MIX_HOME=&amp;quot;$PWD&#x2F;.nix-mix&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      export HEX_HOME=&amp;quot;$PWD&#x2F;.nix-hex&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      mkdir -p &amp;quot;$MIX_HOME&amp;quot; &amp;quot;$HEX_HOME&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Put executables from Mix and Hex directories in $PATH
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      export PATH=&amp;quot;$MIX_HOME&#x2F;bin:$MIX_HOME&#x2F;escripts:$HEX_HOME&#x2F;bin:$PATH&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Set development environment for Mix
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      export MIX_ENV=dev
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Persist history of the IEx (Elixir) and erl (Erlang) shells
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      export ERL_AFLAGS=&amp;quot;-kernel shell_history enabled&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      # Set the path to the rebar3 package from Nix
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;      mix local.rebar --if-missing rebar3 &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff79c6;&quot;&gt;${&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;erlang&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;rebar3&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff79c6;&quot;&gt;}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&#x2F;bin&#x2F;rebar3
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;    &amp;#39;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Without this, there are warnings about LANG, LC_ALL and locales.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Many tests fail due those warnings showing up in test outputs too...
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# This is from https:&#x2F;&#x2F;gist.github.com&#x2F;aabs&#x2F;fba5cd1a8038fb84a46909250d34a5c1
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;LOCALE_ARCHIVE &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff79c6;&quot;&gt;${&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;glibcLocales&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff79c6;&quot;&gt;}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&#x2F;lib&#x2F;locale&#x2F;locale-archive&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;Give this &lt;em&gt;nix-shell&lt;&#x2F;em&gt; a try by copying it in one of your &lt;em&gt;Elixir&lt;&#x2F;em&gt; projects, then
+running &lt;code&gt;nix-shell --pure&lt;&#x2F;code&gt;. Adapt it to your needs, perhaps you want to change
+the &lt;em&gt;Elixir&lt;&#x2F;em&gt; or &lt;em&gt;Erlang&lt;&#x2F;em&gt; version. There is a &lt;strong&gt;lot&lt;&#x2F;strong&gt; of information on the &lt;em&gt;Nix&lt;&#x2F;em&gt;
+packages available for &lt;em&gt;Elixir&lt;&#x2F;em&gt; and &lt;em&gt;Erlang&lt;&#x2F;em&gt; on
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;NixOS&#x2F;nixpkgs&#x2F;blob&#x2F;f26896669bc5a92d879f7d34c9458e8c44635ab5&#x2F;doc&#x2F;languages-frameworks&#x2F;beam.section.md&quot;&gt;&lt;em&gt;GitHub&lt;&#x2F;em&gt;&lt;&#x2F;a&gt;.
+Regarding other &lt;em&gt;Nix&lt;&#x2F;em&gt; packages, you can find them with the &lt;a href=&quot;https:&#x2F;&#x2F;search.nixos.org&#x2F;packages&quot;&gt;&lt;em&gt;Nix&lt;&#x2F;em&gt; Search&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;will-you-reproduce-this&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#will-you-reproduce-this&quot; aria-label=&quot;Anchor link for: will-you-reproduce-this&quot;&gt;Will You Reproduce This?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Give it a try!&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>How to Create Custom haml_lint Linters</title>
+          <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
+          <author>Dany Marcoux</author>
+          <link>https://dmarcoux.com/posts/how-to-create-custom-haml-lint-linters/</link>
+          <guid>https://dmarcoux.com/posts/how-to-create-custom-haml-lint-linters/</guid>
+          <description xml:base="https://dmarcoux.com/posts/how-to-create-custom-haml-lint-linters/">&lt;p&gt;The majority of software engineering teams have rules, guidelines or standards
+for the code they write. While enforcing those manually can definitely work on
+small teams, it doesn&#x27;t scale for medium to large teams. By automating this
+process, linters come to the rescue with their built-in rules. If this isn&#x27;t
+enough for your team, custom linters allow you to codify anything not already
+covered by their default rules.&lt;&#x2F;p&gt;
+&lt;p&gt;Today, you will learn how to create custom &lt;em&gt;haml_lint&lt;&#x2F;em&gt; linters for your &lt;em&gt;Haml&lt;&#x2F;em&gt;
+view templates in your &lt;em&gt;Rails&lt;&#x2F;em&gt; application.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-are-linters&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-are-linters&quot; aria-label=&quot;Anchor link for: what-are-linters&quot;&gt;What Are Linters?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In all kinds of projects, software engineers use linters to analyze source code
+to catch programming errors and bugs, detect coding style inconsistencies,
+enforce guidelines, measure code quality and much more. Web applications built
+with &lt;em&gt;Rails&lt;&#x2F;em&gt; aren&#x27;t different! Every day, thousands of &lt;em&gt;Rails&lt;&#x2F;em&gt; applications rely
+on &lt;em&gt;RuboCop&lt;&#x2F;em&gt; to lint &lt;em&gt;Ruby&lt;&#x2F;em&gt; code. Same for &lt;em&gt;JavaScript&lt;&#x2F;em&gt; code with &lt;em&gt;ESLint&lt;&#x2F;em&gt;.
+Linting view templates is possible with &lt;em&gt;erb_lint&lt;&#x2F;em&gt; for &lt;em&gt;ERB&lt;&#x2F;em&gt; templates,
+&lt;em&gt;haml_lint&lt;&#x2F;em&gt; for &lt;em&gt;Haml&lt;&#x2F;em&gt; templates and &lt;em&gt;slim_lint&lt;&#x2F;em&gt;, you guessed it... for &lt;em&gt;Slim&lt;&#x2F;em&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;So whenever linters find a potential issue in source code, they will report an
+offense and you need to either fix the issue or in rare cases, discard it as a
+false positive.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-and-how-would-you-create-a-custom-linter&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-and-how-would-you-create-a-custom-linter&quot; aria-label=&quot;Anchor link for: why-and-how-would-you-create-a-custom-linter&quot;&gt;Why and How Would You Create a Custom Linter?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;em&gt;haml_lint&lt;&#x2F;em&gt; provides a lot of useful linters, but you might have rules specific
+to your &lt;em&gt;Rails&lt;&#x2F;em&gt; application. In this case, you&#x27;ll have to create a custom linter
+to enforce those rules.&lt;&#x2F;p&gt;
+&lt;p&gt;To begin, add the gem &lt;em&gt;haml_lint&lt;&#x2F;em&gt; in your &lt;em&gt;Gemfile&lt;&#x2F;em&gt; under the &lt;em&gt;development&lt;&#x2F;em&gt; and
+&lt;em&gt;test&lt;&#x2F;em&gt; groups. Do it manually or with this command:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;bundle&lt;&#x2F;span&gt;&lt;span&gt; add haml_lint&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; --group&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;development,test
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Let&#x27;s now start with a simple example. In your &lt;em&gt;Rails&lt;&#x2F;em&gt; application, create the file
+&lt;em&gt;my_first_linter.rb&lt;&#x2F;em&gt; under the &lt;em&gt;lib&#x2F;haml_lint&#x2F;&lt;&#x2F;em&gt; directory. Here&#x27;s the code:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;module &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8be9fd;&quot;&gt;HamlLint
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# MyFirstLinter is the name of the linter in this example, but it can be anything
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;Linter&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;MyFirstLinter &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;font-style:italic;color:#8be9fd;&quot;&gt;Linter
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;include &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;LinterRegistry
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Report an offense if a `div` tag is used.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;#
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# @param [HamlLint::Tree::TagNode] a tag node in a Haml document
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;visit_tag&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;node&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return unless&lt;&#x2F;span&gt;&lt;span&gt; node&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;tag_name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;div&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      record_lint(node, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;You&amp;#39;re not allowed divs!&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;To use this linter, you need to enable it in your &lt;em&gt;haml_lint&lt;&#x2F;em&gt; configuration.  If
+you haven&#x27;t already configured &lt;em&gt;haml_lint&lt;&#x2F;em&gt;, create the file &lt;em&gt;.haml_lint.yml&lt;&#x2F;em&gt; at
+the root of your &lt;em&gt;Rails&lt;&#x2F;em&gt; application. Those are the lines to add in your
+&lt;em&gt;haml_lint&lt;&#x2F;em&gt; configuration:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;yaml&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-yaml &quot;&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;require&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;.&#x2F;lib&#x2F;haml_lint&#x2F;my_first_linter.rb&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;linters&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;MyFirstLinter&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;enabled&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;true
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;So from now on, whenever running &lt;em&gt;haml_lint&lt;&#x2F;em&gt;, this linter will report an
+offense for every &lt;code&gt;&amp;lt;div&amp;gt;&lt;&#x2F;code&gt; defined in a &lt;em&gt;Haml&lt;&#x2F;em&gt; view template. This isn&#x27;t the most
+useful linter, but it&#x27;s only the beginning!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-second-example&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#a-second-example&quot; aria-label=&quot;Anchor link for: a-second-example&quot;&gt;A Second Example&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Let&#x27;s have a look at another linter which reports an offense if the instance
+variable &lt;code&gt;@pagetitle&lt;&#x2F;code&gt; is not set in a &lt;em&gt;Haml&lt;&#x2F;em&gt; view template. Again, same
+procedure as with the first linter. Under the &lt;em&gt;lib&#x2F;haml_lint&#x2F;&lt;&#x2F;em&gt; directory, create
+a file &lt;em&gt;set_pagetitle_in_view_linter.rb&lt;&#x2F;em&gt; with the following code:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;module &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8be9fd;&quot;&gt;HamlLint
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;Linter&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;SetPagetitleInView &lt;&#x2F;span&gt;&lt;span&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;font-style:italic;color:#8be9fd;&quot;&gt;Linter
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;include &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;LinterRegistry
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Report an offense if the instance variable @pagetitle is not set in a
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Haml view. Partials are ignored by this linter.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;#
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# @param [HamlLint::Tree::RootNode] the root of a syntax tree
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;visit_root&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;root_node&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Do not proceed if the view isn&amp;#39;t under the directory &amp;#39;app&#x2F;views&#x2F;&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# and doesn&amp;#39;t end with the extension &amp;#39;.html.haml&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return unless&lt;&#x2F;span&gt;&lt;span&gt; root_node&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;file&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;match?&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5555;&quot;&gt;%r{^app&#x2F;views&#x2F;.*&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;\.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5555;&quot;&gt;html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;\.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5555;&quot;&gt;haml$}&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Do not proceed if the view is a partial.
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Only partials start with an underscore.
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return if &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;File&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;basename(root_node&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;file)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;start_with?(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;_&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Do not proceed if the view defines the instance variable @pagetitle,
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# then this rule is respected. Yay!
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return if&lt;&#x2F;span&gt;&lt;span&gt; instance_variable_pagetitle_is_defined?(document)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      record_lint(root_node, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;Set the instance variable @pagetitle to have a &amp;#39;&lt;&#x2F;span&gt;&lt;span&gt; \
+&lt;&#x2F;span&gt;&lt;span&gt;                             &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;page title when the view is rendered.&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;private
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# @param [HamlLint::Document] a parsed Haml document and its associated metadata
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;instance_variable_pagetitle_is_defined?&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;document&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;      ruby_source &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;HamlLint&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;RubyExtractor&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.new.&lt;&#x2F;span&gt;&lt;span&gt;extract(document)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;source
+&lt;&#x2F;span&gt;&lt;span&gt;      parsed_ruby &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;HamlLint&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;RubyParser&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.new.&lt;&#x2F;span&gt;&lt;span&gt;parse(ruby_source)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      parsed_ruby&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;each_descendant&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;find &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;do &lt;&#x2F;span&gt;&lt;span&gt;|&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt;descendant_node&lt;&#x2F;span&gt;&lt;span&gt;|
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Details on Abstract Syntax Tree from Parser gem:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# https:&#x2F;&#x2F;github.com&#x2F;whitequark&#x2F;parser&#x2F;blob&#x2F;11c7644365fe554217bb4670a4cbc905ab8504cd&#x2F;doc&#x2F;AST_FORMAT.md#to-instance-variable
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Are we assigning an instance variable? Is it called @pagetitle?
+&lt;&#x2F;span&gt;&lt;span&gt;        descendant_node&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;ivasgn_type? &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;&amp;amp;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt; descendant_node&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;children&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;first &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;:@pagetitle
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Enable this linter in your &lt;em&gt;haml_lint&lt;&#x2F;em&gt; configuration file. This should be the
+content of &lt;em&gt;.haml_lint.yml&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;yaml&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-yaml &quot;&gt;&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;require&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;.&#x2F;lib&#x2F;haml_lint&#x2F;my_first_linter.rb&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;  - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;.&#x2F;lib&#x2F;haml_lint&#x2F;set_pagetitle_in_view_linter.rb&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;linters&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;MyFirstLinter&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;enabled&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;true
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;SetPagetitleInView&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;enabled&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;true
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;With this example of a project-specific rule codified in a linter, it&#x27;s now
+impossible to forget assigning a value to &lt;code&gt;@pagetitle&lt;&#x2F;code&gt; in a view template. Gone
+are the &lt;em&gt;&quot;You forgot to set &lt;code&gt;@pagetitle&lt;&#x2F;code&gt; in view_123.html.haml.&quot;&lt;&#x2F;em&gt; reviews in a
+pull request since running &lt;em&gt;haml_lint&lt;&#x2F;em&gt; will catch this issue. This is the power
+of automation!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-deeper-look-into-how-haml-lint-linters-work&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#a-deeper-look-into-how-haml-lint-linters-work&quot; aria-label=&quot;Anchor link for: a-deeper-look-into-how-haml-lint-linters-work&quot;&gt;A Deeper Look Into How &lt;em&gt;haml_lint&lt;&#x2F;em&gt; Linters Work&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;To really understand how &lt;em&gt;haml_lint&lt;&#x2F;em&gt; linters work, you need to learn a few
+things. Nothing complicated, but without this knowledge, you won&#x27;t be able to
+create your own linters.&lt;&#x2F;p&gt;
+&lt;p&gt;Different linters will analyze code in different ways by processing different
+nodes. In &lt;em&gt;haml_lint&lt;&#x2F;em&gt;&#x27;s world, this is called visiting a node and it is defined
+in the various &lt;code&gt;visit_*&lt;&#x2F;code&gt; methods like &lt;code&gt;visit_tag&lt;&#x2F;code&gt; or &lt;code&gt;visit_root&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Going back to the two custom linters you&#x27;ve seen so far, the first visits HTML
+tag nodes and checks if they are a &lt;code&gt;&amp;lt;div&amp;gt;&lt;&#x2F;code&gt;. The second linter is visiting root
+nodes, those are complete &lt;em&gt;Haml&lt;&#x2F;em&gt; view templates, and verify if the instance
+variable &lt;code&gt;@pagetitle&lt;&#x2F;code&gt; is set. Have a look at &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sds&#x2F;haml-lint&#x2F;tree&#x2F;78a551cd1ae239b8c6ac8686d8f219571c62ac66&#x2F;lib&#x2F;haml_lint&#x2F;tree&quot;&gt;&lt;em&gt;haml_lint&lt;&#x2F;em&gt;&#x27;s
+code&lt;&#x2F;a&gt;
+for a list of all nodes. Every node has its &lt;code&gt;visit_NODE_NAME&lt;&#x2F;code&gt; method. So
+&lt;code&gt;visit_root&lt;&#x2F;code&gt; is for root nodes as you&#x27;ve already seen, &lt;code&gt;visit_script&lt;&#x2F;code&gt; is for
+script nodes and so on.&lt;&#x2F;p&gt;
+&lt;p&gt;To evaluate any &lt;em&gt;Ruby&lt;&#x2F;em&gt; code included in &lt;em&gt;Haml&lt;&#x2F;em&gt; view templates, &lt;em&gt;haml_lint&lt;&#x2F;em&gt;
+relies on the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;whitequark&#x2F;parser&quot;&gt;&lt;em&gt;parser&lt;&#x2F;em&gt;&lt;&#x2F;a&gt; gem to build an
+&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Abstract_syntax_tree&quot;&gt;abstract syntax tree&lt;&#x2F;a&gt;. With
+this, analyzing &lt;em&gt;Ruby&lt;&#x2F;em&gt; code is also possible in custom linters. It&#x27;s exactly
+what the second linter &lt;code&gt;SetPagetitleInView&lt;&#x2F;code&gt; does when verifying if &lt;code&gt;@pagetitle&lt;&#x2F;code&gt;
+is set. While most linters probably won&#x27;t need to go this deep, it&#x27;s definitely
+useful to know how.&lt;&#x2F;p&gt;
+&lt;p&gt;For more linter examples, have a look at the
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sds&#x2F;haml-lint&#x2F;tree&#x2F;78a551cd1ae239b8c6ac8686d8f219571c62ac66&#x2F;lib&#x2F;haml_lint&#x2F;linter&quot;&gt;linters&lt;&#x2F;a&gt;
+included in &lt;em&gt;haml_lint&lt;&#x2F;em&gt;. This will definitely help you understand even better
+how linters are built.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;lint-all-the-things&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#lint-all-the-things&quot; aria-label=&quot;Anchor link for: lint-all-the-things&quot;&gt;Lint All The Things!&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;It&#x27;s now time for you to create custom &lt;em&gt;haml_lint&lt;&#x2F;em&gt; linters for &lt;em&gt;Haml&lt;&#x2F;em&gt; view
+templates in your &lt;em&gt;Rails&lt;&#x2F;em&gt; applications.&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Easily Upgrade Your Rails Applications With next_rails</title>
+          <pubDate>Fri, 13 Aug 2021 00:00:00 +0000</pubDate>
+          <author>Dany Marcoux</author>
+          <link>https://dmarcoux.com/posts/easily-upgrade-your-rails-applications-with-next-rails/</link>
+          <guid>https://dmarcoux.com/posts/easily-upgrade-your-rails-applications-with-next-rails/</guid>
+          <description xml:base="https://dmarcoux.com/posts/easily-upgrade-your-rails-applications-with-next-rails/">&lt;p&gt;Did you ever wish you could upgrade your &lt;em&gt;Rails&lt;&#x2F;em&gt; applications without doing it
+all at once? This would make everything much easier, right?&lt;&#x2F;p&gt;
+&lt;p&gt;With &lt;em&gt;next_rails&lt;&#x2F;em&gt;, a toolkit to upgrade &lt;em&gt;Rails&lt;&#x2F;em&gt; applications, turn your wish
+into reality. While &lt;em&gt;Rails&lt;&#x2F;em&gt; upgrades tend to be manageable in small
+applications, many issues are often arising in larger applications due to
+upstream changes like the removal of deprecated features. &lt;em&gt;next_rails&lt;&#x2F;em&gt; makes the
+whole upgrade process easier to manage by allowing you to gradually change your
+code. Let&#x27;s start!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;how-next-rails-works&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-next-rails-works&quot; aria-label=&quot;Anchor link for: how-next-rails-works&quot;&gt;How &lt;em&gt;next_rails&lt;&#x2F;em&gt; Works&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;em&gt;next_rails&lt;&#x2F;em&gt; is a gem and you should add it in your &lt;em&gt;Gemfile&lt;&#x2F;em&gt; under the
+&lt;em&gt;development&lt;&#x2F;em&gt; group. Do it manually or with this command:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;bundle&lt;&#x2F;span&gt;&lt;span&gt; add next_rails&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ffb86c;&quot;&gt; --group&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;development
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Once &lt;em&gt;next_rails&lt;&#x2F;em&gt; is installed, you set it up with &lt;code&gt;next --init&lt;&#x2F;code&gt;. This command
+slightly changes your &lt;em&gt;Gemfile&lt;&#x2F;em&gt; while also creating &lt;em&gt;Gemfile.next&lt;&#x2F;em&gt;, a symlink to
+your &lt;em&gt;Gemfile&lt;&#x2F;em&gt;. The following lines are added to your &lt;em&gt;Gemfile&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;next?
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;File&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;basename(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;__FILE__&lt;&#x2F;span&gt;&lt;span&gt;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;quot;Gemfile.next&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The last step to setup &lt;em&gt;next_rails&lt;&#x2F;em&gt; is to add a &lt;code&gt;if...else&lt;&#x2F;code&gt; statement to your
+&lt;em&gt;Gemfile&lt;&#x2F;em&gt; under the newly introduced &lt;code&gt;next?&lt;&#x2F;code&gt; method. This replaces the usual
+&lt;code&gt;gem &#x27;rails&#x27;&lt;&#x2F;code&gt; line found in every &lt;em&gt;Gemfile&lt;&#x2F;em&gt; of a &lt;em&gt;Rails&lt;&#x2F;em&gt; application, so don&#x27;t
+forget to delete that line too.&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; next?
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# This is the next Rails version your application will run
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;gem &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;rails&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;~&amp;gt; 6.1&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;else
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# This is the Rails version your application currently runs
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;gem &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;rails&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;~&amp;gt; 6.0&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;To run &lt;em&gt;Bundler&lt;&#x2F;em&gt; with the next &lt;em&gt;Rails&lt;&#x2F;em&gt; version, you can prefix any &lt;em&gt;Bundler&lt;&#x2F;em&gt;
+call with &lt;code&gt;next&lt;&#x2F;code&gt;. Let&#x27;s execute &lt;code&gt;next bundle install&lt;&#x2F;code&gt;, this will generate
+&lt;em&gt;Gemfile.next.lock&lt;&#x2F;em&gt; with all gems listed in your &lt;em&gt;Gemfile&lt;&#x2F;em&gt;, but unlike
+&lt;em&gt;Gemfile.lock&lt;&#x2F;em&gt;, it will point to the next &lt;em&gt;Rails&lt;&#x2F;em&gt; version as listed in the
+&lt;code&gt;if...else&lt;&#x2F;code&gt; statement above. Another command example would be &lt;code&gt;next bundle exec rails s&lt;&#x2F;code&gt; to start your Rails application with the next &lt;em&gt;Rails&lt;&#x2F;em&gt; version.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;how-to-write-code-for-the-next-rails-version&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-write-code-for-the-next-rails-version&quot; aria-label=&quot;Anchor link for: how-to-write-code-for-the-next-rails-version&quot;&gt;How to Write Code for the Next &lt;em&gt;Rails&lt;&#x2F;em&gt; Version&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In the directory &lt;em&gt;lib&lt;&#x2F;em&gt; located at the root of your &lt;em&gt;Rails&lt;&#x2F;em&gt; application, define a
+new module &lt;code&gt;RailsVersion&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# lib&#x2F;rails_version.rb
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;module &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8be9fd;&quot;&gt;RailsVersion
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;is_6_1?
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;Rails&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;VERSION&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span&gt;MAJOR &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;6 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;&amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;Rails&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;VERSION&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span&gt;MINOR &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;== &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bd93f9;&quot;&gt;1
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;With this module, you can then check if the application is currently running
+with the next &lt;em&gt;Rails&lt;&#x2F;em&gt; version. It can be in models, controllers, etc...&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;This class...&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;Bicycle
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repair
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;The bicycle is all fixed up!&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;em&gt;...is adapted for the next Rails version:&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;Bicycle
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repair
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Code for the next Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;Everything is repaired!&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;RailsVersion&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;is_6_1?
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Code for the current Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;The bicycle is all fixed up!&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Adapting code for the next &lt;em&gt;Rails&lt;&#x2F;em&gt; version doesn&#x27;t have to be complicated. A
+guard clause or a &lt;code&gt;if...else&lt;&#x2F;code&gt; statement should be enough in most cases. If
+needed, you could also write a separate method like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;Bicycle
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repair
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Code for the next Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return&lt;&#x2F;span&gt;&lt;span&gt; repair_6_1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;RailsVersion&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;is_6_1?
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Code for the current Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;The bicycle is all fixed up!&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repair_6_1
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Do whatever needs to be done for the next Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;how-to-roll-out-the-next-rails-version&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-roll-out-the-next-rails-version&quot; aria-label=&quot;Anchor link for: how-to-roll-out-the-next-rails-version&quot;&gt;How to Roll Out the Next &lt;em&gt;Rails&lt;&#x2F;em&gt; Version&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;You can safely upgrade the &lt;em&gt;Rails&lt;&#x2F;em&gt; version in the &lt;em&gt;Gemfile&lt;&#x2F;em&gt; once all issues
+arising from the next &lt;em&gt;Rails&lt;&#x2F;em&gt; version have been addressed:&lt;&#x2F;p&gt;
+&lt;!-- markdownlint-disable --&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt; next?
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;gem &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;rails&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;~&amp;gt; 6.1&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;else
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Now the same version as above
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;gem &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;rails&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;~&amp;gt; 6.1&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;!-- markdownlint-enable --&gt;
+&lt;p&gt;The code for the newly upgraded &lt;em&gt;Rails&lt;&#x2F;em&gt; version is kept and the rest is removed.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;em&gt;This class...&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;Bicycle
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repair
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Code for next Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;Everything is repaired!&amp;#39; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#66d9ef;&quot;&gt;RailsVersion&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span&gt;is_6_1?
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6272a4;&quot;&gt;# Code for current Rails version
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;The bicycle is all fixed up!&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;em&gt;...is changed to:&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ruby&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-ruby &quot;&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8be9fd;&quot;&gt;Bicycle
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;repair
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#f1fa8c;&quot;&gt;&amp;#39;Everything is repaired!&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff79c6;&quot;&gt;end
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;how-to-keep-gemfile-next-lock-up-to-date&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-keep-gemfile-next-lock-up-to-date&quot; aria-label=&quot;Anchor link for: how-to-keep-gemfile-next-lock-up-to-date&quot;&gt;How to Keep &lt;em&gt;Gemfile.next.lock&lt;&#x2F;em&gt; Up-to-Date&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;The version of &lt;em&gt;Rails&lt;&#x2F;em&gt; and other gems tracked in &lt;em&gt;Gemfile.next.lock&lt;&#x2F;em&gt; have to be
+updated from time to time to follow the dependency updates happening on the
+default &lt;em&gt;Gemfile.lock&lt;&#x2F;em&gt;. This is how you can achieve this:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Overwrite &lt;em&gt;Gemfile.next.lock&lt;&#x2F;em&gt; with a copy of &lt;em&gt;Gemfile.lock&lt;&#x2F;em&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;cp&lt;&#x2F;span&gt;&lt;span&gt; Gemfile.lock Gemfile.next.lock
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Inside your development environment, update the &lt;em&gt;Rails&lt;&#x2F;em&gt; version:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#282a36;color:#f8f8f2;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#50fa7b;&quot;&gt;next&lt;&#x2F;span&gt;&lt;span&gt; bundle update rails
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Create a pull request with the changes or commit them to a branch, this
+depends on your project.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h2 id=&quot;how-did-it-go-for-you&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-did-it-go-for-you&quot; aria-label=&quot;Anchor link for: how-did-it-go-for-you&quot;&gt;How Did It Go For You?&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;This is it, you&#x27;re set to use &lt;em&gt;next_rails&lt;&#x2F;em&gt; in your &lt;em&gt;Rails&lt;&#x2F;em&gt; applications.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

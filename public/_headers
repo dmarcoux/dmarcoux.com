@@ -1,0 +1,16 @@
+# Cloudflare docs: https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Based on https://conradresearch.com/articles/add-security-headers-on-cloudflare-pages/
+/*
+  # Prevents XSS attacks by specifying which sources are allowed to load content.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self';
+  # Stops the browser from MIME-sniffing a response away from the declared content type.
+  X-Content-Type-Options: nosniff
+  # Protects against click-jacking by preventing the site from being framed.
+  X-Frame-Options: DENY
+  # In older browsers this enables the XSS filter in the browser.
+  X-XSS-Protection: 1; mode=block
+  # Controls how much referrer information is included with requests.
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Controls access to browser features like the camera and microphone.
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://dmarcoux.com/</loc>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/</loc>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/ci-with-markdownlint/</loc>
+        <lastmod>2024-10-01</lastmod>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/easily-upgrade-your-rails-applications-with-next-rails/</loc>
+        <lastmod>2021-08-13</lastmod>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/hash-in-nix-packages/</loc>
+        <lastmod>2024-09-30</lastmod>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/how-to-create-custom-haml-lint-linters/</loc>
+        <lastmod>2021-09-27</lastmod>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/manage-music-collection/</loc>
+        <lastmod>2024-09-27</lastmod>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://dmarcoux.com/posts/reproducible-development-environment-for-elixir-with-nix/</loc>
+        <lastmod>2022-11-09</lastmod>
+    </url>
+</urlset>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+
+    
+    
+        <link rel="canonical" href="https://dmarcoux.com/posts/easily-upgrade-your-rails-applications-with-next-rails/" />
+        <meta property="og:url" content="https://dmarcoux.com/posts/easily-upgrade-your-rails-applications-with-next-rails/" />
+    
+
+    
+        
+    
+
+    
+    
+    
+
+    <meta property="og:title" content="Easily Upgrade Your Rails Applications With next_rails" />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://dmarcoux.com/images/og_image.png" />
+    <meta property="og:locale" content="en" />
+
+    
+    
+    
+    
+
+    
+    
+    <meta property="og:description" content="With next_rails, a toolkit to upgrade Rails applications, turn your wish into reality. next_rails makes the whole upgrade process easier to manage by allowing you to gradually change your code." />
+    <meta name="description" content="With next_rails, a toolkit to upgrade Rails applications, turn your wish into reality. next_rails makes the whole upgrade process easier to manage by allowing you to gradually change your code." />
+
+    
+    
+    
+    
+    <meta name="keywords" content="Ruby on Rails, Ruby, Rails, next_rails, Update, Upgrade, Toolkit, Dual Boot" />
+
+    
+    <title>
+        
+            Dany Marcoux | Easily Upgrade Your Rails Applications With next_rails
+        
+    </title>
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="https://dmarcoux.com/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://dmarcoux.com/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://dmarcoux.com/favicon/favicon-16x16.png">
+    <link rel="manifest" href="https://dmarcoux.com/favicon/site.webmanifest">
+
+    
+    
+        <link href=https://dmarcoux.com/fonts.css rel="stylesheet" />
+    
+
+    
+    <script src=https://dmarcoux.com/js/codeblock.js></script>
+
+    
+    <link rel="alternate" type="application/rss+xml" title="Dany Marcoux" href="https://dmarcoux.com/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="Dany Marcoux" href="https://dmarcoux.com/atom.xml">
+
+    <link rel="stylesheet" type="text/css" media="screen" href=https://dmarcoux.com/main.css />
+
+    
+</head>
+
+
+<body>
+    <div class="content">
+        <header>
+    <div class="main">
+        <a href=https://dmarcoux.com/>Dany Marcoux</a>
+
+        <div class="socials">
+            
+            <a rel="me" href="https:&#x2F;&#x2F;github.com&#x2F;dmarcoux&#x2F;" class="social">
+                <img alt="GitHub icon" src=https://dmarcoux.com/icons/github.svg>
+            </a>
+            
+            <a rel="me" href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;danymarcoux&#x2F;" class="social">
+                <img alt="LinkedIn icon" src=https://dmarcoux.com/icons/linkedin.svg>
+            </a>
+            
+            <a rel="alternate" href="https://dmarcoux.com/atom.xml" class="social">
+                <img alt="Atom feed icon" src=https://dmarcoux.com/icons/atom.svg>
+            </a>
+            <a rel="alternate" href="https://dmarcoux.com/rss.xml" class="social">
+                <img alt="RSS feed icon" src=https://dmarcoux.com/icons/rss.svg>
+            </a>
+        </div>
+    </div>
+
+    <nav>
+        
+        <a href=https://dmarcoux.com/posts style="margin-left: 0.5em">Posts</a>
+        
+    </nav>
+</header>
+
+
+        
+        
+<main>
+    <article>
+        <div class="title">
+            
+    <div class="page-header">
+        <h1>Easily Upgrade Your Rails Applications With next_rails</h1>
+    </div>
+
+
+                <div class="meta">
+                    
+                        Posted on <time>13&#x2F;Aug&#x2F;2021</time>
+                    
+
+                    
+
+                    
+
+                    
+                    
+
+                    
+
+                </div>
+        </div>
+
+        
+
+        <section class="body">
+            <p>Did you ever wish you could upgrade your <em>Rails</em> applications without doing it
+all at once? This would make everything much easier, right?</p>
+<p>With <em>next_rails</em>, a toolkit to upgrade <em>Rails</em> applications, turn your wish
+into reality. While <em>Rails</em> upgrades tend to be manageable in small
+applications, many issues are often arising in larger applications due to
+upstream changes like the removal of deprecated features. <em>next_rails</em> makes the
+whole upgrade process easier to manage by allowing you to gradually change your
+code. Let's start!</p>
+<h2 id="how-next-rails-works"><a class="zola-anchor" href="#how-next-rails-works" aria-label="Anchor link for: how-next-rails-works">How <em>next_rails</em> Works</a></h2>
+<p><em>next_rails</em> is a gem and you should add it in your <em>Gemfile</em> under the
+<em>development</em> group. Do it manually or with this command:</p>
+<pre data-lang="bash" style="background-color:#282a36;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#50fa7b;">bundle</span><span> add next_rails</span><span style="font-style:italic;color:#ffb86c;"> --group</span><span style="color:#ff79c6;">=</span><span>development
+</span></code></pre>
+<p>Once <em>next_rails</em> is installed, you set it up with <code>next --init</code>. This command
+slightly changes your <em>Gemfile</em> while also creating <em>Gemfile.next</em>, a symlink to
+your <em>Gemfile</em>. The following lines are added to your <em>Gemfile</em>:</p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">next?
+</span><span>  </span><span style="font-style:italic;color:#66d9ef;">File</span><span style="color:#ff79c6;">.</span><span>basename(</span><span style="color:#bd93f9;">__FILE__</span><span>) </span><span style="color:#ff79c6;">== </span><span style="color:#f1fa8c;">&quot;Gemfile.next&quot;
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<p>The last step to setup <em>next_rails</em> is to add a <code>if...else</code> statement to your
+<em>Gemfile</em> under the newly introduced <code>next?</code> method. This replaces the usual
+<code>gem 'rails'</code> line found in every <em>Gemfile</em> of a <em>Rails</em> application, so don't
+forget to delete that line too.</p>
+<!-- markdownlint-disable -->
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">if</span><span> next?
+</span><span>  </span><span style="color:#6272a4;"># This is the next Rails version your application will run
+</span><span>  </span><span style="color:#ff79c6;">gem </span><span style="color:#f1fa8c;">&#39;rails&#39;</span><span>, </span><span style="color:#f1fa8c;">&#39;~&gt; 6.1&#39;
+</span><span style="color:#ff79c6;">else
+</span><span>  </span><span style="color:#6272a4;"># This is the Rails version your application currently runs
+</span><span>  </span><span style="color:#ff79c6;">gem </span><span style="color:#f1fa8c;">&#39;rails&#39;</span><span>, </span><span style="color:#f1fa8c;">&#39;~&gt; 6.0&#39;
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>To run <em>Bundler</em> with the next <em>Rails</em> version, you can prefix any <em>Bundler</em>
+call with <code>next</code>. Let's execute <code>next bundle install</code>, this will generate
+<em>Gemfile.next.lock</em> with all gems listed in your <em>Gemfile</em>, but unlike
+<em>Gemfile.lock</em>, it will point to the next <em>Rails</em> version as listed in the
+<code>if...else</code> statement above. Another command example would be <code>next bundle exec rails s</code> to start your Rails application with the next <em>Rails</em> version.</p>
+<h2 id="how-to-write-code-for-the-next-rails-version"><a class="zola-anchor" href="#how-to-write-code-for-the-next-rails-version" aria-label="Anchor link for: how-to-write-code-for-the-next-rails-version">How to Write Code for the Next <em>Rails</em> Version</a></h2>
+<p>In the directory <em>lib</em> located at the root of your <em>Rails</em> application, define a
+new module <code>RailsVersion</code>:</p>
+<!-- markdownlint-disable -->
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#6272a4;"># lib/rails_version.rb
+</span><span style="color:#ff79c6;">module </span><span style="color:#8be9fd;">RailsVersion
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#bd93f9;">self</span><span style="color:#ff79c6;">.</span><span style="color:#50fa7b;">is_6_1?
+</span><span>    </span><span style="font-style:italic;color:#66d9ef;">Rails</span><span style="color:#ff79c6;">::</span><span style="font-style:italic;color:#66d9ef;">VERSION</span><span style="color:#ff79c6;">::</span><span>MAJOR </span><span style="color:#ff79c6;">== </span><span style="color:#bd93f9;">6 </span><span style="color:#ff79c6;">&amp;&amp; </span><span style="font-style:italic;color:#66d9ef;">Rails</span><span style="color:#ff79c6;">::</span><span style="font-style:italic;color:#66d9ef;">VERSION</span><span style="color:#ff79c6;">::</span><span>MINOR </span><span style="color:#ff79c6;">== </span><span style="color:#bd93f9;">1
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>With this module, you can then check if the application is currently running
+with the next <em>Rails</em> version. It can be in models, controllers, etc...</p>
+<p><em>This class...</em></p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">class </span><span style="text-decoration:underline;color:#8be9fd;">Bicycle
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">repair
+</span><span>    </span><span style="color:#f1fa8c;">&#39;The bicycle is all fixed up!&#39;
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<p><em>...is adapted for the next Rails version:</em></p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">class </span><span style="text-decoration:underline;color:#8be9fd;">Bicycle
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">repair
+</span><span>    </span><span style="color:#6272a4;"># Code for the next Rails version
+</span><span>    </span><span style="color:#ff79c6;">return </span><span style="color:#f1fa8c;">&#39;Everything is repaired!&#39; </span><span style="color:#ff79c6;">if </span><span style="font-style:italic;color:#66d9ef;">RailsVersion</span><span style="color:#ff79c6;">.</span><span>is_6_1?
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Code for the current Rails version
+</span><span>    </span><span style="color:#f1fa8c;">&#39;The bicycle is all fixed up!&#39;
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<p>Adapting code for the next <em>Rails</em> version doesn't have to be complicated. A
+guard clause or a <code>if...else</code> statement should be enough in most cases. If
+needed, you could also write a separate method like this:</p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">class </span><span style="text-decoration:underline;color:#8be9fd;">Bicycle
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">repair
+</span><span>    </span><span style="color:#6272a4;"># Code for the next Rails version
+</span><span>    </span><span style="color:#ff79c6;">return</span><span> repair_6_1 </span><span style="color:#ff79c6;">if </span><span style="font-style:italic;color:#66d9ef;">RailsVersion</span><span style="color:#ff79c6;">.</span><span>is_6_1?
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Code for the current Rails version
+</span><span>    </span><span style="color:#f1fa8c;">&#39;The bicycle is all fixed up!&#39;
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span>
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">repair_6_1
+</span><span>    </span><span style="color:#6272a4;"># Do whatever needs to be done for the next Rails version
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<h2 id="how-to-roll-out-the-next-rails-version"><a class="zola-anchor" href="#how-to-roll-out-the-next-rails-version" aria-label="Anchor link for: how-to-roll-out-the-next-rails-version">How to Roll Out the Next <em>Rails</em> Version</a></h2>
+<p>You can safely upgrade the <em>Rails</em> version in the <em>Gemfile</em> once all issues
+arising from the next <em>Rails</em> version have been addressed:</p>
+<!-- markdownlint-disable -->
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">if</span><span> next?
+</span><span>  </span><span style="color:#ff79c6;">gem </span><span style="color:#f1fa8c;">&#39;rails&#39;</span><span>, </span><span style="color:#f1fa8c;">&#39;~&gt; 6.1&#39;
+</span><span style="color:#ff79c6;">else
+</span><span>  </span><span style="color:#6272a4;"># Now the same version as above
+</span><span>  </span><span style="color:#ff79c6;">gem </span><span style="color:#f1fa8c;">&#39;rails&#39;</span><span>, </span><span style="color:#f1fa8c;">&#39;~&gt; 6.1&#39;
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>The code for the newly upgraded <em>Rails</em> version is kept and the rest is removed.</p>
+<p><em>This class...</em></p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">class </span><span style="text-decoration:underline;color:#8be9fd;">Bicycle
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">repair
+</span><span>    </span><span style="color:#6272a4;"># Code for next Rails version
+</span><span>    </span><span style="color:#ff79c6;">return </span><span style="color:#f1fa8c;">&#39;Everything is repaired!&#39; </span><span style="color:#ff79c6;">if </span><span style="font-style:italic;color:#66d9ef;">RailsVersion</span><span style="color:#ff79c6;">.</span><span>is_6_1?
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Code for current Rails version
+</span><span>    </span><span style="color:#f1fa8c;">&#39;The bicycle is all fixed up!&#39;
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<p><em>...is changed to:</em></p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">class </span><span style="text-decoration:underline;color:#8be9fd;">Bicycle
+</span><span>  </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">repair
+</span><span>    </span><span style="color:#f1fa8c;">&#39;Everything is repaired!&#39;
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<h2 id="how-to-keep-gemfile-next-lock-up-to-date"><a class="zola-anchor" href="#how-to-keep-gemfile-next-lock-up-to-date" aria-label="Anchor link for: how-to-keep-gemfile-next-lock-up-to-date">How to Keep <em>Gemfile.next.lock</em> Up-to-Date</a></h2>
+<p>The version of <em>Rails</em> and other gems tracked in <em>Gemfile.next.lock</em> have to be
+updated from time to time to follow the dependency updates happening on the
+default <em>Gemfile.lock</em>. This is how you can achieve this:</p>
+<ol>
+<li>
+<p>Overwrite <em>Gemfile.next.lock</em> with a copy of <em>Gemfile.lock</em>:</p>
+<pre data-lang="bash" style="background-color:#282a36;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#50fa7b;">cp</span><span> Gemfile.lock Gemfile.next.lock
+</span></code></pre>
+</li>
+<li>
+<p>Inside your development environment, update the <em>Rails</em> version:</p>
+<pre data-lang="bash" style="background-color:#282a36;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#50fa7b;">next</span><span> bundle update rails
+</span></code></pre>
+</li>
+<li>
+<p>Create a pull request with the changes or commit them to a branch, this
+depends on your project.</p>
+</li>
+</ol>
+<h2 id="how-did-it-go-for-you"><a class="zola-anchor" href="#how-did-it-go-for-you" aria-label="Anchor link for: how-did-it-go-for-you">How Did It Go For You?</a></h2>
+<p>This is it, you're set to use <em>next_rails</em> in your <em>Rails</em> applications.</p>
+
+        </section>
+    </article>
+</main>
+
+    </div>
+</body>
+
+</html>

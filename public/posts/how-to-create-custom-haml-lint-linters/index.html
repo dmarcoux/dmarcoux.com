@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+
+    
+    
+        <link rel="canonical" href="https://dmarcoux.com/posts/how-to-create-custom-haml-lint-linters/" />
+        <meta property="og:url" content="https://dmarcoux.com/posts/how-to-create-custom-haml-lint-linters/" />
+    
+
+    
+        
+    
+
+    
+    
+    
+
+    <meta property="og:title" content="How to Create Custom haml_lint Linters" />
+    <meta property="og:type" content="article" />
+    <meta property="og:image" content="https://dmarcoux.com/images/og_image.png" />
+    <meta property="og:locale" content="en" />
+
+    
+    
+    
+    
+
+    
+    
+    <meta property="og:description" content="haml_lint provides a lot of useful linters, but you might have rules specific to your Rails application. In this case, you&#x27;ll have to create a custom linter to enforce those rules." />
+    <meta name="description" content="haml_lint provides a lot of useful linters, but you might have rules specific to your Rails application. In this case, you&#x27;ll have to create a custom linter to enforce those rules." />
+
+    
+    
+    
+    
+    <meta name="keywords" content="haml_lint, custom linters, lint, Haml, Ruby on Rails, Ruby, Rails" />
+
+    
+    <title>
+        
+            Dany Marcoux | How to Create Custom haml_lint Linters
+        
+    </title>
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="https://dmarcoux.com/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://dmarcoux.com/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://dmarcoux.com/favicon/favicon-16x16.png">
+    <link rel="manifest" href="https://dmarcoux.com/favicon/site.webmanifest">
+
+    
+    
+        <link href=https://dmarcoux.com/fonts.css rel="stylesheet" />
+    
+
+    
+    <script src=https://dmarcoux.com/js/codeblock.js></script>
+
+    
+    <link rel="alternate" type="application/rss+xml" title="Dany Marcoux" href="https://dmarcoux.com/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="Dany Marcoux" href="https://dmarcoux.com/atom.xml">
+
+    <link rel="stylesheet" type="text/css" media="screen" href=https://dmarcoux.com/main.css />
+
+    
+</head>
+
+
+<body>
+    <div class="content">
+        <header>
+    <div class="main">
+        <a href=https://dmarcoux.com/>Dany Marcoux</a>
+
+        <div class="socials">
+            
+            <a rel="me" href="https:&#x2F;&#x2F;github.com&#x2F;dmarcoux&#x2F;" class="social">
+                <img alt="GitHub icon" src=https://dmarcoux.com/icons/github.svg>
+            </a>
+            
+            <a rel="me" href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;danymarcoux&#x2F;" class="social">
+                <img alt="LinkedIn icon" src=https://dmarcoux.com/icons/linkedin.svg>
+            </a>
+            
+            <a rel="alternate" href="https://dmarcoux.com/atom.xml" class="social">
+                <img alt="Atom feed icon" src=https://dmarcoux.com/icons/atom.svg>
+            </a>
+            <a rel="alternate" href="https://dmarcoux.com/rss.xml" class="social">
+                <img alt="RSS feed icon" src=https://dmarcoux.com/icons/rss.svg>
+            </a>
+        </div>
+    </div>
+
+    <nav>
+        
+        <a href=https://dmarcoux.com/posts style="margin-left: 0.5em">Posts</a>
+        
+    </nav>
+</header>
+
+
+        
+        
+<main>
+    <article>
+        <div class="title">
+            
+    <div class="page-header">
+        <h1>How to Create Custom haml_lint Linters</h1>
+    </div>
+
+
+                <div class="meta">
+                    
+                        Posted on <time>27&#x2F;Sep&#x2F;2021</time>
+                    
+
+                    
+
+                    
+
+                    
+                    
+
+                    
+
+                </div>
+        </div>
+
+        
+
+        <section class="body">
+            <p>The majority of software engineering teams have rules, guidelines or standards
+for the code they write. While enforcing those manually can definitely work on
+small teams, it doesn't scale for medium to large teams. By automating this
+process, linters come to the rescue with their built-in rules. If this isn't
+enough for your team, custom linters allow you to codify anything not already
+covered by their default rules.</p>
+<p>Today, you will learn how to create custom <em>haml_lint</em> linters for your <em>Haml</em>
+view templates in your <em>Rails</em> application.</p>
+<h2 id="what-are-linters"><a class="zola-anchor" href="#what-are-linters" aria-label="Anchor link for: what-are-linters">What Are Linters?</a></h2>
+<p>In all kinds of projects, software engineers use linters to analyze source code
+to catch programming errors and bugs, detect coding style inconsistencies,
+enforce guidelines, measure code quality and much more. Web applications built
+with <em>Rails</em> aren't different! Every day, thousands of <em>Rails</em> applications rely
+on <em>RuboCop</em> to lint <em>Ruby</em> code. Same for <em>JavaScript</em> code with <em>ESLint</em>.
+Linting view templates is possible with <em>erb_lint</em> for <em>ERB</em> templates,
+<em>haml_lint</em> for <em>Haml</em> templates and <em>slim_lint</em>, you guessed it... for <em>Slim</em>!</p>
+<p>So whenever linters find a potential issue in source code, they will report an
+offense and you need to either fix the issue or in rare cases, discard it as a
+false positive.</p>
+<h2 id="why-and-how-would-you-create-a-custom-linter"><a class="zola-anchor" href="#why-and-how-would-you-create-a-custom-linter" aria-label="Anchor link for: why-and-how-would-you-create-a-custom-linter">Why and How Would You Create a Custom Linter?</a></h2>
+<p><em>haml_lint</em> provides a lot of useful linters, but you might have rules specific
+to your <em>Rails</em> application. In this case, you'll have to create a custom linter
+to enforce those rules.</p>
+<p>To begin, add the gem <em>haml_lint</em> in your <em>Gemfile</em> under the <em>development</em> and
+<em>test</em> groups. Do it manually or with this command:</p>
+<pre data-lang="bash" style="background-color:#282a36;color:#f8f8f2;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#50fa7b;">bundle</span><span> add haml_lint</span><span style="font-style:italic;color:#ffb86c;"> --group</span><span style="color:#ff79c6;">=</span><span>development,test
+</span></code></pre>
+<p>Let's now start with a simple example. In your <em>Rails</em> application, create the file
+<em>my_first_linter.rb</em> under the <em>lib/haml_lint/</em> directory. Here's the code:</p>
+<!-- markdownlint-disable -->
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">module </span><span style="color:#8be9fd;">HamlLint
+</span><span>  </span><span style="color:#6272a4;"># MyFirstLinter is the name of the linter in this example, but it can be anything
+</span><span>  </span><span style="color:#ff79c6;">class </span><span style="font-style:italic;color:#66d9ef;">Linter</span><span style="text-decoration:underline;color:#ff79c6;">::</span><span style="text-decoration:underline;color:#8be9fd;">MyFirstLinter </span><span>&lt; </span><span style="text-decoration:underline;font-style:italic;color:#8be9fd;">Linter
+</span><span>    </span><span style="color:#ff79c6;">include </span><span style="color:#ffffff;">LinterRegistry
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Report an offense if a `div` tag is used.
+</span><span>    </span><span style="color:#6272a4;">#
+</span><span>    </span><span style="color:#6272a4;"># @param [HamlLint::Tree::TagNode] a tag node in a Haml document
+</span><span>    </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">visit_tag</span><span>(</span><span style="font-style:italic;color:#ffb86c;">node</span><span>)
+</span><span>      </span><span style="color:#ff79c6;">return unless</span><span> node</span><span style="color:#ff79c6;">.</span><span>tag_name </span><span style="color:#ff79c6;">== </span><span style="color:#f1fa8c;">&#39;div&#39;
+</span><span>
+</span><span>      record_lint(node, </span><span style="color:#f1fa8c;">&quot;You&#39;re not allowed divs!&quot;</span><span>)
+</span><span>    </span><span style="color:#ff79c6;">end
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>To use this linter, you need to enable it in your <em>haml_lint</em> configuration.  If
+you haven't already configured <em>haml_lint</em>, create the file <em>.haml_lint.yml</em> at
+the root of your <em>Rails</em> application. Those are the lines to add in your
+<em>haml_lint</em> configuration:</p>
+<!-- markdownlint-disable -->
+<pre data-lang="yaml" style="background-color:#282a36;color:#f8f8f2;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#ff79c6;">require</span><span>:
+</span><span>  - </span><span style="color:#f1fa8c;">&#39;./lib/haml_lint/my_first_linter.rb&#39;
+</span><span>
+</span><span style="color:#ff79c6;">linters</span><span>:
+</span><span>  </span><span style="color:#ff79c6;">MyFirstLinter</span><span>:
+</span><span>    </span><span style="color:#ff79c6;">enabled</span><span>: </span><span style="color:#bd93f9;">true
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>So from now on, whenever running <em>haml_lint</em>, this linter will report an
+offense for every <code>&lt;div&gt;</code> defined in a <em>Haml</em> view template. This isn't the most
+useful linter, but it's only the beginning!</p>
+<h2 id="a-second-example"><a class="zola-anchor" href="#a-second-example" aria-label="Anchor link for: a-second-example">A Second Example</a></h2>
+<p>Let's have a look at another linter which reports an offense if the instance
+variable <code>@pagetitle</code> is not set in a <em>Haml</em> view template. Again, same
+procedure as with the first linter. Under the <em>lib/haml_lint/</em> directory, create
+a file <em>set_pagetitle_in_view_linter.rb</em> with the following code:</p>
+<pre data-lang="ruby" style="background-color:#282a36;color:#f8f8f2;" class="language-ruby "><code class="language-ruby" data-lang="ruby"><span style="color:#ff79c6;">module </span><span style="color:#8be9fd;">HamlLint
+</span><span>  </span><span style="color:#ff79c6;">class </span><span style="font-style:italic;color:#66d9ef;">Linter</span><span style="text-decoration:underline;color:#ff79c6;">::</span><span style="text-decoration:underline;color:#8be9fd;">SetPagetitleInView </span><span>&lt; </span><span style="text-decoration:underline;font-style:italic;color:#8be9fd;">Linter
+</span><span>    </span><span style="color:#ff79c6;">include </span><span style="color:#ffffff;">LinterRegistry
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># Report an offense if the instance variable @pagetitle is not set in a
+</span><span>    </span><span style="color:#6272a4;"># Haml view. Partials are ignored by this linter.
+</span><span>    </span><span style="color:#6272a4;">#
+</span><span>    </span><span style="color:#6272a4;"># @param [HamlLint::Tree::RootNode] the root of a syntax tree
+</span><span>    </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">visit_root</span><span>(</span><span style="font-style:italic;color:#ffb86c;">root_node</span><span>)
+</span><span>      </span><span style="color:#6272a4;"># Do not proceed if the view isn&#39;t under the directory &#39;app/views/&#39;
+</span><span>      </span><span style="color:#6272a4;"># and doesn&#39;t end with the extension &#39;.html.haml&#39;
+</span><span>      </span><span style="color:#ff79c6;">return unless</span><span> root_node</span><span style="color:#ff79c6;">.</span><span>file</span><span style="color:#ff79c6;">.</span><span style="color:#ffffff;">match?</span><span>(</span><span style="color:#ff5555;">%r{^app/views/.*</span><span style="color:#ff79c6;">\.</span><span style="color:#ff5555;">html</span><span style="color:#ff79c6;">\.</span><span style="color:#ff5555;">haml$}</span><span>)
+</span><span>
+</span><span>      </span><span style="color:#6272a4;"># Do not proceed if the view is a partial.
+</span><span>      </span><span style="color:#6272a4;"># Only partials start with an underscore.
+</span><span>      </span><span style="color:#ff79c6;">return if </span><span style="font-style:italic;color:#66d9ef;">File</span><span style="color:#ff79c6;">.</span><span>basename(root_node</span><span style="color:#ff79c6;">.</span><span>file)</span><span style="color:#ff79c6;">.</span><span>start_with?(</span><span style="color:#f1fa8c;">&#39;_&#39;</span><span>)
+</span><span>
+</span><span>      </span><span style="color:#6272a4;"># Do not proceed if the view defines the instance variable @pagetitle,
+</span><span>      </span><span style="color:#6272a4;"># then this rule is respected. Yay!
+</span><span>      </span><span style="color:#ff79c6;">return if</span><span> instance_variable_pagetitle_is_defined?(document)
+</span><span>
+</span><span>      record_lint(root_node, </span><span style="color:#f1fa8c;">&#39;Set the instance variable @pagetitle to have a &#39;</span><span> \
+</span><span>                             </span><span style="color:#f1fa8c;">&#39;page title when the view is rendered.&#39;</span><span>)
+</span><span>    </span><span style="color:#ff79c6;">end
+</span><span>
+</span><span>    </span><span style="color:#ff79c6;">private
+</span><span>
+</span><span>    </span><span style="color:#6272a4;"># @param [HamlLint::Document] a parsed Haml document and its associated metadata
+</span><span>    </span><span style="color:#ff79c6;">def </span><span style="color:#50fa7b;">instance_variable_pagetitle_is_defined?</span><span>(</span><span style="font-style:italic;color:#ffb86c;">document</span><span>)
+</span><span>      ruby_source </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#66d9ef;">HamlLint</span><span style="color:#ff79c6;">::</span><span style="font-style:italic;color:#66d9ef;">RubyExtractor</span><span style="color:#ff79c6;">.new.</span><span>extract(document)</span><span style="color:#ff79c6;">.</span><span>source
+</span><span>      parsed_ruby </span><span style="color:#ff79c6;">= </span><span style="font-style:italic;color:#66d9ef;">HamlLint</span><span style="color:#ff79c6;">::</span><span style="font-style:italic;color:#66d9ef;">RubyParser</span><span style="color:#ff79c6;">.new.</span><span>parse(ruby_source)
+</span><span>
+</span><span>      parsed_ruby</span><span style="color:#ff79c6;">.</span><span>each_descendant</span><span style="color:#ff79c6;">.</span><span>find </span><span style="color:#ff79c6;">do </span><span>|</span><span style="font-style:italic;color:#ffb86c;">descendant_node</span><span>|
+</span><span>        </span><span style="color:#6272a4;"># Details on Abstract Syntax Tree from Parser gem:
+</span><span>        </span><span style="color:#6272a4;"># https://github.com/whitequark/parser/blob/11c7644365fe554217bb4670a4cbc905ab8504cd/doc/AST_FORMAT.md#to-instance-variable
+</span><span>        </span><span style="color:#6272a4;"># Are we assigning an instance variable? Is it called @pagetitle?
+</span><span>        descendant_node</span><span style="color:#ff79c6;">.</span><span>ivasgn_type? </span><span style="color:#ff79c6;">&amp;&amp;</span><span> descendant_node</span><span style="color:#ff79c6;">.</span><span>children</span><span style="color:#ff79c6;">.</span><span>first </span><span style="color:#ff79c6;">== </span><span style="color:#bd93f9;">:@pagetitle
+</span><span>      </span><span style="color:#ff79c6;">end
+</span><span>    </span><span style="color:#ff79c6;">end
+</span><span>  </span><span style="color:#ff79c6;">end
+</span><span style="color:#ff79c6;">end
+</span></code></pre>
+<p>Enable this linter in your <em>haml_lint</em> configuration file. This should be the
+content of <em>.haml_lint.yml</em>:</p>
+<!-- markdownlint-disable -->
+<pre data-lang="yaml" style="background-color:#282a36;color:#f8f8f2;" class="language-yaml "><code class="language-yaml" data-lang="yaml"><span style="color:#ff79c6;">require</span><span>:
+</span><span>  - </span><span style="color:#f1fa8c;">&#39;./lib/haml_lint/my_first_linter.rb&#39;
+</span><span>  - </span><span style="color:#f1fa8c;">&#39;./lib/haml_lint/set_pagetitle_in_view_linter.rb&#39;
+</span><span>
+</span><span style="color:#ff79c6;">linters</span><span>:
+</span><span>  </span><span style="color:#ff79c6;">MyFirstLinter</span><span>:
+</span><span>    </span><span style="color:#ff79c6;">enabled</span><span>: </span><span style="color:#bd93f9;">true
+</span><span>
+</span><span>  </span><span style="color:#ff79c6;">SetPagetitleInView</span><span>:
+</span><span>    </span><span style="color:#ff79c6;">enabled</span><span>: </span><span style="color:#bd93f9;">true
+</span></code></pre>
+<!-- markdownlint-enable -->
+<p>With this example of a project-specific rule codified in a linter, it's now
+impossible to forget assigning a value to <code>@pagetitle</code> in a view template. Gone
+are the <em>"You forgot to set <code>@pagetitle</code> in view_123.html.haml."</em> reviews in a
+pull request since running <em>haml_lint</em> will catch this issue. This is the power
+of automation!</p>
+<h2 id="a-deeper-look-into-how-haml-lint-linters-work"><a class="zola-anchor" href="#a-deeper-look-into-how-haml-lint-linters-work" aria-label="Anchor link for: a-deeper-look-into-how-haml-lint-linters-work">A Deeper Look Into How <em>haml_lint</em> Linters Work</a></h2>
+<p>To really understand how <em>haml_lint</em> linters work, you need to learn a few
+things. Nothing complicated, but without this knowledge, you won't be able to
+create your own linters.</p>
+<p>Different linters will analyze code in different ways by processing different
+nodes. In <em>haml_lint</em>'s world, this is called visiting a node and it is defined
+in the various <code>visit_*</code> methods like <code>visit_tag</code> or <code>visit_root</code>.</p>
+<p>Going back to the two custom linters you've seen so far, the first visits HTML
+tag nodes and checks if they are a <code>&lt;div&gt;</code>. The second linter is visiting root
+nodes, those are complete <em>Haml</em> view templates, and verify if the instance
+variable <code>@pagetitle</code> is set. Have a look at <a href="https://github.com/sds/haml-lint/tree/78a551cd1ae239b8c6ac8686d8f219571c62ac66/lib/haml_lint/tree"><em>haml_lint</em>'s
+code</a>
+for a list of all nodes. Every node has its <code>visit_NODE_NAME</code> method. So
+<code>visit_root</code> is for root nodes as you've already seen, <code>visit_script</code> is for
+script nodes and so on.</p>
+<p>To evaluate any <em>Ruby</em> code included in <em>Haml</em> view templates, <em>haml_lint</em>
+relies on the <a href="https://github.com/whitequark/parser"><em>parser</em></a> gem to build an
+<a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree</a>. With
+this, analyzing <em>Ruby</em> code is also possible in custom linters. It's exactly
+what the second linter <code>SetPagetitleInView</code> does when verifying if <code>@pagetitle</code>
+is set. While most linters probably won't need to go this deep, it's definitely
+useful to know how.</p>
+<p>For more linter examples, have a look at the
+<a href="https://github.com/sds/haml-lint/tree/78a551cd1ae239b8c6ac8686d8f219571c62ac66/lib/haml_lint/linter">linters</a>
+included in <em>haml_lint</em>. This will definitely help you understand even better
+how linters are built.</p>
+<h2 id="lint-all-the-things"><a class="zola-anchor" href="#lint-all-the-things" aria-label="Anchor link for: lint-all-the-things">Lint All The Things!</a></h2>
+<p>It's now time for you to create custom <em>haml_lint</em> linters for <em>Haml</em> view
+templates in your <em>Rails</em> applications.</p>
+
+        </section>
+    </article>
+</main>
+
+    </div>
+</body>
+
+</html>
