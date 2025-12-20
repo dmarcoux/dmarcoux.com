@@ -46,7 +46,7 @@
     <meta property="og:description" content="{{ description }}" />
     <meta name="description" content="{{ description }}" />
 
-    {% set keywords = page.extra.meta.keywords | default(value="DevOps Engineer, Software Engineer, DevOps, Web Development, Linux, Docker, Ruby") %}
+    {% set keywords = page.extra.meta.keywords | default(value="DevOps Engineer, Software Engineer, Web Development, DevOps, Ruby, Elixir, Linux, Docker") %}
     {% set number_of_keywords = keywords | split(pat=",") | length %}
     {# Having 10 keywords is optimal, and more is definitely not good. This is enforced below. #}
     {% if number_of_keywords > 10 %}

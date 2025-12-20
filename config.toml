@@ -5,7 +5,7 @@ base_url = "https://dmarcoux.com" # This isn't actually used, since `zola serve`
 title = "Dany Marcoux"
 description = """\
                 Software and DevOps engineer with 12+ years of experience. \
-                I write about DevOps, web development, Linux, Ruby, and more.\
+                I write about web development, DevOps, Ruby, Elixir and more.\
               """
 
 # Whether to automatically compile all Sass files in the sass directory
