@@ -76,7 +76,7 @@ The following environment variables are set.
 
 _Production & Preview_:
 
-- `ZOLA_VERSION` with the value `0.19.2`
+- `ZOLA_VERSION` with the value `0.21.0`
 
 _Production_:
 
