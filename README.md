@@ -3,10 +3,19 @@
 ## Development
 
 Reproducible development environment for [Zola](https://github.com/getzola/zola)
-which relies on [Nix](https://github.com/NixOS/nix), a purely functional and
-cross-platform package manager.
+which relies on [Mise](https://mise.jdx.dev/).
 
-Start with `nix-shell --pure`.
+Install tools with:
+
+```bash
+mise install
+```
+
+See available tasks with:
+
+```bash
+mise run
+```
 
 ### Create Page / Blog Post
 
@@ -18,20 +27,6 @@ existing pages or create a file with only the frontmatter like:
 title = "My page"
 (...)
 +++
-```
-
-### Web Server
-
-Start web server for development on localhost:1111
-
-```bash
-zola serve
-```
-
-### Lint Markdown Files
-
-```bash
-lint
 ```
 
 ## Production
