@@ -6,6 +6,7 @@ description = """\
                 to manage by allowing you to gradually change your code.\
               """
 date = "2021-08-13"
+aliases = ["/posts/easily-upgrade-your-rails-applications-with-next_rails/index.html"]
 
 [extra.meta]
 type = "article"
